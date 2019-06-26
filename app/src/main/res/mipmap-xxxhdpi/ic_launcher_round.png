@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
+  <component name="AvailableLibraryUpdateStorage">
+    <library-updates>
+      <library-update>
+        <group-id>com.android.support</group-id>
+        <name>appcompat-v7</name>
+        <version>28.0.0</version>
+        <repository>Google,Android Repository</repository>
+      </library-update>
+      <library-update>
+        <group-id>com.android.support.constraint</group-id>
+        <name>constraint-layout</name>
+        <version>2.0.0-alpha5</version>
+        <repository>Google</repository>
+      </library-update>
+      <library-update>
+        <group-id>junit</group-id>
+        <name>junit</name>
+        <version>4.13-beta-2</version>
+        <repository>JCenter</repository>
+      </library-update>
+      <library-update>
+        <group-id>com.android.support.test</group-id>
+        <name>runner</name>
+        <version>1.0.2</version>
+        <repository>Google,Android Repository</repository>
+      </library-update>
+      <library-update>
+        <group-id>com.android.support.test.espresso</group-id>
+        <name>espresso-core</name>
+        <version>3.0.2</version>
+        <repository>Google,Android Repository</repository>
+      </library-update>
+      <library-update>
+        <group-id>com.android.support</group-id>
+        <name>support-v4</name>
+        <version>28.0.0</version>
+        <repository>Google,Android Repository</repository>
+      </library-update>
+    </library-updates>
+    <last-search-timestamp>1557140980736</last-search-timestamp>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d88c7337-a02f-41d9-9f91-d382b60e79e0" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="dynamic-device-display" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/ButtonGroupFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="30" column="34" selection-start-line="30" selection-start-column="34" selection-end-line="30" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/assets/Elements.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="3540" lean-forward="true" selection-start-line="10" selection-start-column="3540" selection-end-line="10" selection-end-column="3540" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/assets/TV.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/assets/Thermostat.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/assets/SecCamera.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/assets/Kettle.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="1111" lean-forward="true" selection-start-line="10" selection-start-column="1111" selection-end-line="10" selection-end-column="1111" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="resourceFile" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>getChildNodes</find>
+      <find>ui.x</find>
+      <find>fragmentManager</find>
+      <find>selection</find>
+      <find>input</find>
+      <find>timePickerListener</find>
+      <find>switchtoggle</find>
+      <find>directionalarrows</find>
+      <find>status</find>
+      <find>range</find>
+      <find>view</find>
+      <find>NAME</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_time_picker.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_switch_toggle.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_selection.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_text_input.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_status.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_scheduler.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_range_input.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_progress.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_button_toggle.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_plus_minus.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_password.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_button_group.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/activity_device.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/OnFragmentInteractionListener.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/FragmentMessenger.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/PlusMinusFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/Elements.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/drawable/strings.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/drawable/border.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/res/layout/fragment_directional_buttons.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/DirectionalButtonsFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/PasswordFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/StepperFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/IoTDevice.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/xmlui/IotDeviceActivity.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/ElementsFactory.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/SwitchToggleFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/SelectionFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/ButtonToggleFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/ProgressFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/RangeInputFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/StatusFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/TextInputFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/SecCamera.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/Thermostat.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/SchedulerFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/DeviceDiscoveryActivity.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/IotNetworkDiscovery.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/Kettle.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/XmlParser.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/Kettl4e.xml" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/xmlui/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/TV.xml" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/DeviceActivity.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/UiGenerator.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/DynamicFragment.java" />
+        <option value="$PROJECT_DIR$/dynamicdevicedisplay/src/main/java/me/aidengaripoli/dynamicdevicedisplay/elements/ButtonGroupFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/Memory.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-1927" />
+    <option name="width" value="974" />
+    <option name="height" value="1047" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dynamic-device-display" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dynamic-device-display" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="dynamic-device-display" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dynamic-device-display" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="app" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="dynamic-device-display" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dynamic-device-display" type="58d84e3e:PackageViewProjectNode" />
+              <item name="app" type="616d4139:PackageViewModuleNode" />
+            </path>
+            <path>
+              <item name="dynamic-device-display" type="58d84e3e:PackageViewProjectNode" />
+              <item name="dynamicdevicedisplay" type="616d4139:PackageViewModuleNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dynamic-device-display" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="dynamic-device-display" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="assets" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="dynamic-device-display" type="1abcf292:AndroidViewProjectNode" />
+              <item name="dynamicdevicedisplay" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="dynamic-device-display" type

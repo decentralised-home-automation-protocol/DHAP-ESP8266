@@ -1,0 +1,89 @@
+# Device Examples
+
+## Kettle
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<device>
+    <group id="1" permission="RR">
+        <name>Kettle</name>
+        <room>Kitchen</room>
+    </group>
+    <group id="2" permission="WR">
+        <gui_element id="1">
+            <type>switchtoggle</type>
+            <disp_settings>On/Off</disp_settings>
+            <status_location>2</status_location>
+            <comment>Turn on or off</comment>
+        </gui_element>
+    </group>
+    <group id="3" permission="WR">
+        <gui_element id="1">
+            <type>buttongroup</type>
+            <disp_settings> ,Boil</disp_settings>
+            <status_location>3</status_location>
+            <comment>Start Boil</comment>
+        </gui_element>
+    </group>
+    <group id="4" permission="WR">
+        <gui_element id="1">
+            <type>switchtoggle</type>
+            <disp_settings>Keep Warm</disp_settings>
+            <status_location>4</status_location>
+            <comment>Keep warm</comment>
+        </gui_element>
+    </group>
+    <group id="5" permission="WR">
+        <gui_element id="1">
+            <type>rangeinput</type>
+            <disp_settings>Target Temperature,Set,10,150</disp_settings>
+            <status_location>5</status_location>
+            <comment>Set the target temperature</comment>
+        </gui_element>
+    </group>
+    <group id="6" permission="WR">
+        <gui_element id="1">
+            <type>selection</type>
+            <disp_settings>Temp Settings,Coffee,Hot Chocolate,Water</disp_settings>
+            <status_location>6</status_location>
+            <comment>Set temp settings</comment>
+        </gui_element>
+    </group>
+</device>
+```
+
+## Security Camera
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<device>
+    <group id="1" permission="RR">
+        <name>Security Camera</name>
+        <room>Outside</room>
+    </group>
+    <group id="1" permission="WR">
+        <gui_element id="1">
+            <type>switchtoggle</type>
+            <disp_settings>On/Off</disp_settings>
+            <status_location>1</status_location>
+            <comment>Turn TV On or Off</comment>
+        </gui_element>
+        <gui_element id="2">
+            <type>selection</type>
+            <disp_settings>Source,Cam1,Cam2,Cam3,Cam4</disp_settings>
+            <status_location>4</status_location>
+            <comment>Camera source</comment>
+        </gui_element>
+    </group>
+    <group id="2" permission="WR">
+        <gui_element id="1">
+            <type>buttontoggle</type>
+            <disp_settings>Record,Recording,Not Recording</disp_settings>
+            <status_location>5</status_location>
+            <comment>Recording</comment>
+        </gui_element>
+    </group>
+    <group id="3" permission="WR">
+        <gui_element id="1">
+            <type>directionalbuttons</type>
+            <disp_settings>Camera Movement,↑,→,↓,←<
