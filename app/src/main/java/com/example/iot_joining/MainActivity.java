@@ -3,6 +3,8 @@ package com.example.iot_joining;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -16,6 +18,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             Button networkButton = new Button(getApplicationContext());
             networkButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    //Join wifi network.
                     passwordDialog(result.SSID);
                 }
             });
@@ -83,5 +90,55 @@ public class MainActivity extends AppCompatActivity {
         wifiManager.disconnect();
         wifiManager.enableNetwork(netId, true);
         wifiManager.reconnect();
+
+        sendPacket();
+    }
+
+    private void sendPacket(){
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+                    ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                    while (!mWifi.isConnected()) {
+                        mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                        // Do whatever
+                    }
+
+                    Log.e(TAG, "run: connected");
+
+                    DatagramSocket ds;
+                    try {
+                        ds = new DatagramSocket();
+                        String str = "Welcome java im a meme lord";
+                        InetAddress ip = InetAddress.getByName("192.168.4.22");
+
+                        DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+                        Log.e(TAG, "run: Sending...");
+                        ds.send(dp);
+                        Log.e(TAG, "run: Sent");
+                        Log.e(TAG, "run: Waiting to receive...");
+                        ds.receive(dp);
+                        Log.e(TAG, "run: Received");
+                        String s = new String(dp.getData(), 0, dp.getLength());
+                        Log.e(TAG, "run: " + s);
+                        ds.close();
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
     }
 }
