@@ -2,9 +2,11 @@
 #include <WiFiUdp.h>
 
 WiFiUDP Udp;
-unsigned int localUdpPort = 4210;                     // local port to listen on
-char incomingPacket[255];                             // buffer for incoming packets
-char replyPacket[] = "Hi there! Got the message :-)"; // a reply string to send back
+unsigned int localUdpPort = 4210; // local port to listen on
+char incomingPacket[255];         // buffer for incoming packets
+char replyPacket[] = "Connected"; // a reply string to send back
+
+bool hasJoinedNetwork = false;
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
@@ -30,6 +32,23 @@ void setup()
 
 void loop()
 {
+    if (hasJoinedNetwork)
+    {
+        performIoTCommands();
+    }
+    else
+    {
+        recieveJoiningPackets();
+    }
+}
+
+void performIoTCommands()
+{
+    return;
+}
+
+void recieveJoiningPackets()
+{
     int packetSize = Udp.parsePacket();
     if (packetSize)
     {
@@ -42,9 +61,31 @@ void loop()
         }
         Serial.printf("UDP packet contents: %s\n", incomingPacket);
 
-        // send back a reply, to the IP address and port we got the packet from
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write(replyPacket);
-        Udp.endPacket();
+        char delim[] = ":";
+        char *ssid_string = strtok(incomingPacket, delim);
+        char *pass_string = strtok(NULL, delim);
+
+        joinNetwork(ssid_string, pass_string);
     }
+}
+
+void joinNetwork(char *SSID, char *password)
+{
+    Serial.printf("Joining network\nSSID: %s\nPassword: %s", SSID, password);
+
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, password);
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+
+    hasJoinedNetwork = true;
 }
