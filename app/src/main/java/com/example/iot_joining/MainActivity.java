@@ -19,6 +19,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -97,5 +103,46 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, IoTDevice.class);
         intent.putExtra("SSID", SSID);
         startActivity(intent);
+    }
+
+    public void GetUi(View view){
+        Thread thread = new Thread(() -> {
+            try {
+                DatagramSocket ds;
+                try {
+                    ds = new DatagramSocket();
+                    String str = "ui";
+                    InetAddress ip = InetAddress.getByName("192.168.1.107");
+
+                    byte[] buf = new byte[4000];
+
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
+                    Log.e(TAG, "run: Sending..." + str);
+                    ds.send(dp);
+                    Log.e(TAG, "run: Waiting to receive...");
+                    ds.receive(dp);
+                    Log.e(TAG, "run: Received");
+                    String s = new String(dp.getData(), 0, dp.getLength());
+                    Log.e(TAG, "run: " + s);
+                    ds.close();
+
+
+                    Intent intent = new Intent(this, Display.class);
+                    intent.putExtra("xml", s);
+
+                    startActivity(intent);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
     }
 }
