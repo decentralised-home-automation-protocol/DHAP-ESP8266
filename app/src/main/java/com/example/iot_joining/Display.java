@@ -5,12 +5,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
 import me.aidengaripoli.dynamicdevicedisplay.IoTDevice;
@@ -19,6 +25,8 @@ import me.aidengaripoli.dynamicdevicedisplay.OnFragmentInteractionListener;
 import me.aidengaripoli.dynamicdevicedisplay.UiGenerator;
 
 public class Display extends AppCompatActivity implements OnFragmentInteractionListener {
+    private String TAG = "Display";
+
     FragmentManager fragmentManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,5 +52,49 @@ public class Display extends AppCompatActivity implements OnFragmentInteractionL
     @Override
     public void onFragmentMessage(String tag, String data) {
         Log.i("Fragment Message", tag + ": " + data);
+        sendCommand(tag, data);
+    }
+
+    public void sendCommand(String tag, String data){
+        Thread thread = new Thread(() -> {
+            try {
+                DatagramSocket ds;
+                try {
+                    ds = new DatagramSocket();
+                    String str = tag+": " + data;
+                    InetAddress ip = InetAddress.getByName("192.168.1.107");
+
+                    byte[] buf = new byte[4000];
+
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+
+                    Log.e(TAG, "run: Sending..." + str);
+                    ds.send(requestPacket);
+                    Log.e(TAG, "run: Waiting to receive...");
+                    ds.receive(dp);
+                    Log.e(TAG, "run: Received");
+                    String s = new String(dp.getData(), 0, dp.getLength());
+                    Log.e(TAG, "run: " + s);
+                    ds.close();
+
+
+                    Intent intent = new Intent(this, Display.class);
+                    intent.putExtra("xml", s);
+
+                    startActivity(intent);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
     }
 }

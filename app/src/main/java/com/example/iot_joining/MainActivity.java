@@ -111,14 +111,16 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "ui";
+                    String str = "UI";
                     InetAddress ip = InetAddress.getByName("192.168.1.107");
 
                     byte[] buf = new byte[4000];
 
                     DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+
                     Log.e(TAG, "run: Sending..." + str);
-                    ds.send(dp);
+                    ds.send(requestPacket);
                     Log.e(TAG, "run: Waiting to receive...");
                     ds.receive(dp);
                     Log.e(TAG, "run: Received");
