@@ -79,7 +79,7 @@ public:
     {
         if (hasJoinedNetwork)
         {
-            if (isUiRequest())
+            if (isCommandUiRequest())
             {
                 sendXMLfile();
             }
@@ -91,13 +91,13 @@ public:
         }
         else
         {
-            getSSIDandPassword();
+            getSSIDandPasswordFromCommand();
             joinNetwork();
         }
         return false;
     }
 
-    bool isUiRequest()
+    bool isCommandUiRequest()
     {
         return incomingPacket[0] == 'U' && incomingPacket[1] == 'I';
     }
@@ -126,7 +126,7 @@ public:
         strcpy(replyPacket, response.c_str());
     }
 
-    void getSSIDandPassword()
+    void getSSIDandPasswordFromCommand()
     {
         char delim[] = ":";
         SSID = strtok(incomingPacket, delim);
