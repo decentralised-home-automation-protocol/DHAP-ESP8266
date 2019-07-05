@@ -64,25 +64,11 @@ public class Display extends AppCompatActivity implements OnFragmentInteractionL
                     String str = tag+": " + data;
                     InetAddress ip = InetAddress.getByName("192.168.1.107");
 
-                    byte[] buf = new byte[4000];
-
-                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
                     DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
 
-                    Log.e(TAG, "run: Sending..." + str);
+                    Log.e(TAG, "run: Sending Request " + str);
                     ds.send(requestPacket);
-                    Log.e(TAG, "run: Waiting to receive...");
-                    ds.receive(dp);
-                    Log.e(TAG, "run: Received");
-                    String s = new String(dp.getData(), 0, dp.getLength());
-                    Log.e(TAG, "run: " + s);
                     ds.close();
-
-
-                    Intent intent = new Intent(this, Display.class);
-                    intent.putExtra("xml", s);
-
-                    startActivity(intent);
                 } catch (SocketException e) {
                     e.printStackTrace();
                 } catch (UnknownHostException e) {
