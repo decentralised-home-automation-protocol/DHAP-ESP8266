@@ -5,11 +5,9 @@
 WiFiUDP Udp;
 unsigned int localUdpPort = 4210; // local port to listen on
 char incomingPacket[255];         // buffer for incoming packets
-
-char replyPacket[3500]; // a reply string to send back
+char *replyPacket;                // a reply string to send back
 
 bool hasJoinedNetwork = false;
-bool mounted = false;
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
@@ -20,7 +18,14 @@ void setup()
     Serial.begin(115200);
     Serial.println();
 
-    mounted = SPIFFS.begin();
+    if (SPIFFS.begin())
+    {
+        Serial.println("mount success");
+    }
+    else
+    {
+        Serial.println("mount failed");
+    }
 
     joinNetwork("TP-LINK_AE045A", "0358721743");
 
@@ -39,26 +44,23 @@ void setup()
 
 void loop()
 {
-
-    // openFile();
-    // delay(2000);
-    performIoTCommands();
-
-    // if (hasJoinedNetwork)
-    // {
-    //     performIoTCommands();
-    // }
-    // else
-    // {
-    //     recieveJoiningPackets();
-    // }
+    if (hasJoinedNetwork)
+    {
+        sendXMLfile();
+    }
+    else
+    {
+        recieveJoiningPackets();
+    }
 }
 
-void performIoTCommands()
+void sendXMLfile()
 {
     int packetSize = Udp.parsePacket();
     if (packetSize)
     {
+        Serial.println("ui packet recieved");
+
         // receive incoming UDP packets
         Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
         int len = Udp.read(incomingPacket, 255);
@@ -68,55 +70,27 @@ void performIoTCommands()
         }
         Serial.printf("UDP packet contents: %s\n", incomingPacket);
 
-        openFile();
+        readFile();
 
-        // send back a reply, to the IP address and port we got the packet from
-        // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        // Udp.write(replyPacket);
-        // Udp.endPacket();
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.write(replyPacket);
+        Udp.endPacket();
     }
 }
 
-void openFile()
+void readFile()
 {
-    if (mounted)
+    String response;
+    File file = SPIFFS.open("/TV.xml", "r");
+    replyPacket = new char[file.size()];
+
+    while (file.position() < file.size())
     {
-        Serial.println("mount success");
+        response += file.readString();
     }
-    else
-    {
-        Serial.println("mount failed");
-    }
-
-    Dir dir = SPIFFS.openDir("");
-    String response = "";
-
-    while (dir.next())
-    {
-        Serial.println(dir.fileName());
-        if (dir.fileSize())
-        {
-            File f = dir.openFile("r");
-            size_t size = f.size();
-
-            std::unique_ptr<char[]> buf(new char[size]);
-
-            while (f.position() < f.size())
-            {
-                String line = f.readString();
-                response += line;
-                Serial.println(line);
-            }
-            f.close();
-        }
-    }
-    Serial.println(response);
+    file.close();
 
     strcpy(replyPacket, response.c_str());
-
-    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.write(replyPacket);
-    Udp.endPacket();
 }
 
 void recieveJoiningPackets()
@@ -124,6 +98,8 @@ void recieveJoiningPackets()
     int packetSize = Udp.parsePacket();
     if (packetSize)
     {
+        Serial.println("joining packet recieved");
+
         // receive incoming UDP packets
         Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
         int len = Udp.read(incomingPacket, 255);
