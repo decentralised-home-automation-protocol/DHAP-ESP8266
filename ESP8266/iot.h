@@ -14,6 +14,11 @@ public:
     char incomingPacket[255];         // buffer for incoming packets
     char *replyPacket;                // a reply string to send back
     bool hasJoinedNetwork = false;
+    char *SSID;
+    char *password;
+
+    const char *DEFAULT_SSID = "TP-LINK_AE045A";
+    const char *DEFAULT_PASSWORD = "0358721743";
 
     void setup(bool setupAP)
     {
@@ -32,7 +37,9 @@ public:
         }
         else
         {
-            joinNetwork("TP-LINK_AE045A", "0358721743");
+            strcpy(SSID, DEFAULT_SSID);
+            strcpy(password, DEFAULT_PASSWORD);
+            joinNetwork();
         }
     }
 
@@ -84,7 +91,8 @@ public:
         }
         else
         {
-            recieveJoiningPackets();
+            getSSIDandPassword();
+            joinNetwork();
         }
         return false;
     }
@@ -118,19 +126,15 @@ public:
         strcpy(replyPacket, response.c_str());
     }
 
-    void recieveJoiningPackets()
+    void getSSIDandPassword()
     {
         char delim[] = ":";
-        char *ssid_string = strtok(incomingPacket, delim);
-        char *pass_string = strtok(NULL, delim);
-
-        joinNetwork(ssid_string, pass_string);
+        SSID = strtok(incomingPacket, delim);
+        password = strtok(NULL, delim);
     }
 
-    void joinNetwork(char *SSID, char *password)
+    void joinNetwork()
     {
-        Serial.printf("Joining network\nSSID: %s\nPassword: %s", SSID, password);
-
         WiFi.mode(WIFI_STA);
         WiFi.begin(SSID, password);
 
