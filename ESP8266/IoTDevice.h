@@ -1,28 +1,17 @@
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
-#include "FS.h"
-#include "network.h"
+#include "NetworkManager.h"
 
-class iot
+class IoTDevice
 {
 public:
-    WiFiUDP Udp;
-    network net;
-    char recentPacket[255]; // buffer for incoming packets
+    NetworkManager net;
+    FileManager fileManager;
 
     char *DEFAULT_SSID = "TP-LINK_AE045A";
     char *DEFAULT_PASSWORD = "0358721743";
 
     void setup(bool setupAP)
     {
-        if (SPIFFS.begin())
-        {
-            Serial.println("mount success");
-        }
-        else
-        {
-            Serial.println("mount failed");
-        }
+        fileManager.mountFileSystem();
 
         if (setupAP)
         {
@@ -57,32 +46,29 @@ public:
             }
             else
             {
-                net.getIoTCommand(iotCommand);
+                net.getRecentPacket(iotCommand);
                 return true;
             }
         }
         else
         {
-            char *SSID;
-            char *password;
-            getSSIDandPasswordFromCommand(SSID, password);
-            net.joinNetwork(SSID, password);
+            joinNewNetwork();
         }
         return false;
     }
 
     bool isCommandUiRequest()
     {
-        net.getRecentPacket(recentPacket);
-        return recentPacket[0] == 'U' && recentPacket[1] == 'I';
+        return net.incomingPacket[0] == 'U' && net.incomingPacket[1] == 'I';
     }
 
-    void getSSIDandPasswordFromCommand(char *SSID, char *password)
+    void joinNewNetwork()
     {
-        net.getRecentPacket(recentPacket);
-
+        char *SSID;
+        char *password;
         char delim[] = ":";
-        SSID = strtok(recentPacket, delim);
+        SSID = strtok(net.incomingPacket, delim);
         password = strtok(NULL, delim);
+        net.joinNetwork(SSID, password);
     }
 };

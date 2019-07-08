@@ -1,18 +1,19 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
-#include "FS.h"
+#include "FileManager.h"
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
 IPAddress subnet(255, 255, 255, 0);
 
-class network
+class NetworkManager
 {
 public:
     WiFiUDP Udp;
+    FileManager fileManager;
+
     unsigned int localUdpPort = 4210; // local port to listen on
     char incomingPacket[255];         // buffer for incoming packets
-    char *replyPacket;                // a reply string to send back
     bool hasJoinedNetwork = false;
 
     bool commandRecieved()
@@ -30,11 +31,6 @@ public:
             return true;
         }
         return false;
-    }
-
-    void getIoTCommand(char *iotCommand)
-    {
-        strcpy(iotCommand, incomingPacket);
     }
 
     void getRecentPacket(char *recentPacket)
@@ -57,27 +53,11 @@ public:
         Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.softAPIP().toString().c_str(), localUdpPort);
     }
 
-    void readFile()
-    {
-        String response;
-        File file = SPIFFS.open("/TV.xml", "r");
-        replyPacket = new char[file.size()];
-
-        while (file.position() < file.size())
-        {
-            response += file.readString();
-        }
-        file.close();
-
-        strcpy(replyPacket, response.c_str());
-    }
-
     void sendXMLfile()
     {
-        readFile();
-
+        String response = fileManager.readFile();
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write(replyPacket);
+        Udp.write(response.c_str());
         Udp.endPacket();
     }
 
