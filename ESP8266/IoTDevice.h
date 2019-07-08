@@ -2,30 +2,31 @@
 
 class IoTDevice
 {
-public:
-    NetworkManager net;
+private:
+    NetworkManager networkManager;
     FileManager fileManager;
 
     char *DEFAULT_SSID = "TP-LINK_AE045A";
     char *DEFAULT_PASSWORD = "0358721743";
 
+public:
     void setup(bool setupAP)
     {
         fileManager.mountFileSystem();
 
         if (setupAP)
         {
-            net.setupAccessPoint();
+            networkManager.setupAccessPoint();
         }
         else
         {
-            net.joinNetwork(DEFAULT_SSID, DEFAULT_PASSWORD);
+            networkManager.joinNetwork(DEFAULT_SSID, DEFAULT_PASSWORD);
         }
     }
 
     bool commandRecieved(char *iotCommand)
     {
-        bool newIncomingCommandReceived = net.commandRecieved();
+        bool newIncomingCommandReceived = networkManager.commandRecieved();
         if (newIncomingCommandReceived)
         {
             return handleIncomingPacket(iotCommand);
@@ -38,15 +39,15 @@ public:
 
     bool handleIncomingPacket(char *iotCommand)
     {
-        if (net.hasJoinedNetwork)
+        if (networkManager.hasJoinedNetwork)
         {
             if (isCommandUiRequest())
             {
-                net.sendXMLfile();
+                networkManager.sendXMLfile();
             }
             else
             {
-                net.getRecentPacket(iotCommand);
+                networkManager.getRecentPacket(iotCommand);
                 return true;
             }
         }
@@ -59,16 +60,14 @@ public:
 
     bool isCommandUiRequest()
     {
-        return net.incomingPacket[0] == 'U' && net.incomingPacket[1] == 'I';
+        return networkManager.incomingPacket[0] == 'U' && networkManager.incomingPacket[1] == 'I';
     }
 
     void joinNewNetwork()
     {
-        char *SSID;
-        char *password;
         char delim[] = ":";
-        SSID = strtok(net.incomingPacket, delim);
-        password = strtok(NULL, delim);
-        net.joinNetwork(SSID, password);
+        char *SSID = strtok(networkManager.incomingPacket, delim);
+        char *password = strtok(NULL, delim);
+        networkManager.joinNetwork(SSID, password);
     }
 };

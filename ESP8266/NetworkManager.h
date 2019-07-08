@@ -8,12 +8,16 @@ IPAddress subnet(255, 255, 255, 0);
 
 class NetworkManager
 {
-public:
+private:
     WiFiUDP Udp;
     FileManager fileManager;
 
     unsigned int localUdpPort = 4210; // local port to listen on
-    char incomingPacket[255];         // buffer for incoming packets
+    char *DEFAULT_SSID = "ESPsoftAP_01";
+    char *DEFAULT_PASSWORD = "passforap";
+
+public:
+    char incomingPacket[255]; // buffer for incoming packets
     bool hasJoinedNetwork = false;
 
     bool commandRecieved()
@@ -44,7 +48,7 @@ public:
         Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
         Serial.print("Setting soft-AP ... ");
-        Serial.println(WiFi.softAP("ESPsoftAP_01", "passforap") ? "Ready" : "Failed!");
+        Serial.println(WiFi.softAP(DEFAULT_SSID, DEFAULT_PASSWORD) ? "Ready" : "Failed!");
 
         Serial.print("Soft-AP IP address = ");
         Serial.println(WiFi.softAPIP());

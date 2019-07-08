@@ -2,9 +2,10 @@
 
 class FileManager
 {
-public:
+private:
     char *xmlFileName = "/TV.xml";
 
+public:
     void mountFileSystem()
     {
         if (SPIFFS.begin())
