@@ -20,7 +20,6 @@ public:
         }
         else
         {
-            // fileManager.saveNetworkCredentials("TP-LINK_AE045A", "0358721743");
             String credentials = fileManager.getNetworkCredentials();
 
             if (credentials.length() == 0)
@@ -33,7 +32,11 @@ public:
                 char *creds = new char[credentials.length()];
                 strcpy(creds, credentials.c_str());
                 tolkenizeCredentials(creds);
-                networkManager.joinNetwork(ssid, password);
+                if (!networkManager.joinNetwork(ssid, password))
+                {
+                    Serial.println("Failed to join network!");
+                    networkManager.setupAccessPoint();
+                }
             }
         }
     }
@@ -65,8 +68,14 @@ public:
         else
         {
             tolkenizeCredentials(networkManager.incomingPacket);
-            fileManager.saveNetworkCredentials(ssid, password);
-            networkManager.joinNetwork(ssid, password);
+            if (networkManager.joinNetwork(ssid, password))
+            {
+                fileManager.saveNetworkCredentials(ssid, password);
+            }
+            else
+            {
+                Serial.println("Failed to join network!");
+            }
         }
         return false;
     }

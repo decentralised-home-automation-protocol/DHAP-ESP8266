@@ -55,6 +55,7 @@ public:
 
         Udp.begin(localUdpPort);
         Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.softAPIP().toString().c_str(), localUdpPort);
+        hasJoinedNetwork = false;
     }
 
     void sendXMLfile()
@@ -65,16 +66,26 @@ public:
         Udp.endPacket();
     }
 
-    void joinNetwork(char *SSID, char *password)
+    bool joinNetwork(char *SSID, char *password)
     {
-        WiFi.mode(WIFI_STA);
+        WiFi.mode(WIFI_AP_STA);
         WiFi.begin(SSID, password);
+
+        int timeout = 10;
+        Serial.printf("Attempting to connecting to %s...\n", SSID);
 
         while (WiFi.status() != WL_CONNECTED)
         {
-            delay(500);
-            Serial.print(".");
+            delay(1000);
+            Serial.printf("Timeout in...%d\n", timeout);
+            timeout--;
+            if (timeout == 0)
+            {
+                return false;
+            }
         }
+
+        WiFi.mode(WIFI_STA);
 
         Serial.println("WiFi connected");
         Serial.println("IP address: ");
@@ -82,5 +93,6 @@ public:
         Udp.begin(localUdpPort);
 
         hasJoinedNetwork = true;
+        return hasJoinedNetwork;
     }
 };
