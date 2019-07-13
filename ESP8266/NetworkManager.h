@@ -20,7 +20,7 @@ public:
     char incomingPacket[255]; // buffer for incoming packets
     bool hasJoinedNetwork = false;
 
-    bool commandRecieved()
+    bool newCommandRecieved()
     {
         int packetSize = Udp.parsePacket();
         if (packetSize)
@@ -64,6 +64,7 @@ public:
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(response.c_str());
         Udp.endPacket();
+        Serial.println("XML File sent.");
     }
 
     void sendDiscoveryPacket()
@@ -71,6 +72,7 @@ public:
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(WiFi.localIP().toString().c_str());
         Udp.endPacket();
+        Serial.println("Discovery Packet Sent.");
     }
 
     bool joinNetwork(char *SSID, char *password)

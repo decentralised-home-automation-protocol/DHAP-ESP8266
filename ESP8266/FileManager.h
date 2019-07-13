@@ -33,7 +33,7 @@ public:
         return response;
     }
 
-    String getNetworkCredentials()
+    String getSavedNetworkCredentials()
     {
         Serial.println("Getting network credentials from file");
         File file = SPIFFS.open(networkCredentialsFileName, "r");

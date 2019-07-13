@@ -20,7 +20,7 @@ public:
         }
         else
         {
-            String credentials = fileManager.getNetworkCredentials();
+            String credentials = fileManager.getSavedNetworkCredentials();
 
             if (credentials.length() == 0)
             {
@@ -31,7 +31,8 @@ public:
             {
                 char *creds = new char[credentials.length()];
                 strcpy(creds, credentials.c_str());
-                tolkenizeCredentials(creds);
+                tolkenizeCredentials(creds); //Gets SSID and password from saved credentials string.
+
                 if (!networkManager.joinNetwork(ssid, password))
                 {
                     Serial.println("Failed to join network!");
@@ -43,8 +44,7 @@ public:
 
     bool commandRecieved(char *iotCommand)
     {
-        bool newIncomingCommandReceived = networkManager.commandRecieved();
-        if (newIncomingCommandReceived)
+        if (networkManager.newCommandRecieved())
         {
             return handleIncomingPacket(iotCommand);
         }
@@ -57,14 +57,17 @@ public:
         {
             if (isUIRequest())
             {
+                Serial.println("UI Request Recieved.");
                 networkManager.sendXMLfile();
             }
             else if (isDiscoveryRequest())
             {
+                Serial.println("Discovery Request Recieved.");
                 networkManager.sendDiscoveryPacket();
             }
             else
             {
+                Serial.println("IoT Command Recieved.");
                 networkManager.getRecentPacket(iotCommand);
                 return true;
             }
