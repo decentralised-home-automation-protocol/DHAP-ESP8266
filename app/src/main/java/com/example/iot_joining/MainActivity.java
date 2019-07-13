@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "DI";
-                    InetAddress ip = InetAddress.getByName("192.168.1.255");
+                    String str = "UI";
+                    InetAddress ip = InetAddress.getByName("192.168.1.101");
 
                     byte[] buf = new byte[4000];
 
@@ -127,6 +127,43 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("xml", s);
 
                     startActivity(intent);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+    }
+
+    public void Discovery(View view){
+        Thread thread = new Thread(() -> {
+            try {
+                DatagramSocket ds;
+                try {
+                    ds = new DatagramSocket();
+                    String str = "DI";
+                    InetAddress ip = InetAddress.getByName("192.168.1.255");
+
+                    byte[] buf = new byte[100];
+
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+
+                    Log.e(TAG, "run: Sending..." + str);
+                    ds.send(requestPacket);
+                    Log.e(TAG, "run: Waiting to receive...");
+                    ds.receive(dp);
+                    Log.e(TAG, "run: Received");
+                    String s = new String(dp.getData(), 0, dp.getLength());
+                    Log.e(TAG, "run: " + s);
+                    ds.close();
                 } catch (SocketException e) {
                     e.printStackTrace();
                 } catch (UnknownHostException e) {
