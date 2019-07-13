@@ -44,9 +44,13 @@ public class IoTDevice extends AppCompatActivity {
                 try {
                     ds = new DatagramSocket();
                     String str = SSID + ":" + password;
-                    InetAddress ip = InetAddress.getByName("192.168.4.22");
+                    InetAddress ip = InetAddress.getByName("192.168.4.255");
+//                    InetAddress address = InetAddress.getByName(Utils.getBroadcastAddress());
+
 
                     DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+
+                    ds.setBroadcast(true);
                     Log.e(TAG, "run: Sending..." + str);
                     ds.send(dp);
                     Log.e(TAG, "run: Waiting to receive...");

@@ -55,9 +55,13 @@ public:
     {
         if (networkManager.hasJoinedNetwork)
         {
-            if (isCommandUiRequest())
+            if (isUIRequest())
             {
                 networkManager.sendXMLfile();
+            }
+            else if (isDiscoveryRequest())
+            {
+                networkManager.sendDiscoveryPacket();
             }
             else
             {
@@ -67,22 +71,32 @@ public:
         }
         else
         {
-            tolkenizeCredentials(networkManager.incomingPacket);
-            if (networkManager.joinNetwork(ssid, password))
-            {
-                fileManager.saveNetworkCredentials(ssid, password);
-            }
-            else
-            {
-                Serial.println("Failed to join network!");
-            }
+            attemptToJoinNetwork();
         }
         return false;
     }
 
-    bool isCommandUiRequest()
+    void attemptToJoinNetwork()
+    {
+        tolkenizeCredentials(networkManager.incomingPacket);
+        if (networkManager.joinNetwork(ssid, password))
+        {
+            fileManager.saveNetworkCredentials(ssid, password);
+        }
+        else
+        {
+            Serial.println("Failed to join network!");
+        }
+    }
+
+    bool isUIRequest()
     {
         return networkManager.incomingPacket[0] == 'U' && networkManager.incomingPacket[1] == 'I';
+    }
+
+    bool isDiscoveryRequest()
+    {
+        return networkManager.incomingPacket[0] == 'D' && networkManager.incomingPacket[1] == 'I';
     }
 
     void tolkenizeCredentials(char *credentials)

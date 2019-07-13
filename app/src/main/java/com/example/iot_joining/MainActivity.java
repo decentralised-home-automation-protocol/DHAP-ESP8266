@@ -52,11 +52,7 @@ public class MainActivity extends AppCompatActivity {
         for (final ScanResult result : results) {
 
             Button networkButton = new Button(getApplicationContext());
-            networkButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    passwordDialog(result.SSID);
-                }
-            });
+            networkButton.setOnClickListener(v -> passwordDialog(result.SSID));
 
             networkButton.setText(result.SSID);
             foundNetworks.addView(networkButton);
@@ -70,11 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         new AlertDialog.Builder(MainActivity.this).setView(formElementsView)
                 .setTitle("Enter Password")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        joinNetwork(SSID, passwordEditText.getText().toString());
-                    }
+                .setPositiveButton("OK", (dialog, id) -> {
+                    dialog.cancel();
+                    joinNetwork(SSID, passwordEditText.getText().toString());
                 }).show();
     }
 
@@ -111,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "UI";
-                    InetAddress ip = InetAddress.getByName("192.168.1.107");
+                    String str = "DI";
+                    InetAddress ip = InetAddress.getByName("192.168.1.255");
 
                     byte[] buf = new byte[4000];
 

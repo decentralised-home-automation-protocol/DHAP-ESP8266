@@ -66,6 +66,13 @@ public:
         Udp.endPacket();
     }
 
+    void sendDiscoveryPacket()
+    {
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.write(WiFi.localIP().toString().c_str());
+        Udp.endPacket();
+    }
+
     bool joinNetwork(char *SSID, char *password)
     {
         WiFi.mode(WIFI_AP_STA);
