@@ -1,4 +1,5 @@
 #include "NetworkManager.h"
+#include "FileManager.h"
 
 class IoTDevice
 {
@@ -58,12 +59,16 @@ public:
             if (isUIRequest())
             {
                 Serial.println("UI Request Recieved.");
-                networkManager.sendXMLfile();
+                String response = fileManager.readFile();
+                networkManager.sendReplyPacket(response);
+                Serial.println("XML File sent.");
             }
             else if (isDiscoveryRequest())
             {
                 Serial.println("Discovery Request Recieved.");
-                networkManager.sendDiscoveryPacket();
+                String response = networkManager.getLocalIP();
+                networkManager.sendReplyPacket(response);
+                Serial.println("Discovery Packet Sent.");
             }
             else
             {

@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
-#include "FileManager.h"
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
@@ -10,7 +9,6 @@ class NetworkManager
 {
 private:
     WiFiUDP Udp;
-    FileManager fileManager;
 
     unsigned int localUdpPort = 4210; // local port to listen on
     char *DEFAULT_SSID = "ESPsoftAP_01";
@@ -58,21 +56,16 @@ public:
         hasJoinedNetwork = false;
     }
 
-    void sendXMLfile()
+    String getLocalIP()
     {
-        String response = fileManager.readFile();
+        return WiFi.localIP().toString();
+    }
+
+    void sendReplyPacket(String response)
+    {
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(response.c_str());
         Udp.endPacket();
-        Serial.println("XML File sent.");
-    }
-
-    void sendDiscoveryPacket()
-    {
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write(WiFi.localIP().toString().c_str());
-        Udp.endPacket();
-        Serial.println("Discovery Packet Sent.");
     }
 
     bool joinNetwork(char *SSID, char *password)
