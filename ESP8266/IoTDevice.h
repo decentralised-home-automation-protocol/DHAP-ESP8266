@@ -109,7 +109,7 @@ public:
 
     void tolkenizeCredentials(char *credentials)
     {
-        ssid = strtok(credentials, ":");
-        password = strtok(NULL, ":");
+        ssid = strtok(credentials, ",");
+        password = strtok(NULL, ",");
     }
 };

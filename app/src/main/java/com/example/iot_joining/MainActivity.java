@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
                     byte[] buf = new byte[4000];
 
-                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
-                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 8888);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);
 
                     Log.e(TAG, "run: Sending..." + str);
                     ds.send(requestPacket);
@@ -153,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
 
                     byte[] buf = new byte[100];
 
-                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 4210);
-                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 4210);
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 8888);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);
 
                     Log.e(TAG, "run: Sending..." + str);
                     ds.send(requestPacket);

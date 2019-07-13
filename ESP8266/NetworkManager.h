@@ -10,7 +10,7 @@ class NetworkManager
 private:
     WiFiUDP Udp;
 
-    unsigned int localUdpPort = 4210; // local port to listen on
+    unsigned int localUdpPort = 8888; // local port to listen on
     char *DEFAULT_SSID = "ESPsoftAP_01";
     char *DEFAULT_PASSWORD = "passforap";
 
@@ -73,7 +73,7 @@ public:
         WiFi.mode(WIFI_AP_STA);
         WiFi.begin(SSID, password);
 
-        int timeout = 10;
+        int timeout = 30;
         Serial.printf("Attempting to connecting to %s...\n", SSID);
 
         while (WiFi.status() != WL_CONNECTED)

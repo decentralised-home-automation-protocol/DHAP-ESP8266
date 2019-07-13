@@ -52,7 +52,7 @@ public:
         Serial.println("Saving network credentials to file");
 
         File file = SPIFFS.open(networkCredentialsFileName, "w");
-        String credentials = SSID + ":" + password;
+        String credentials = SSID + "," + password;
         file.write(credentials.c_str());
         file.close();
     }
