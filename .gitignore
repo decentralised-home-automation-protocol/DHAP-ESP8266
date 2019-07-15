@@ -11,3 +11,13 @@
 /build
 /captures
 .externalNativeBuild
+
+app-build/build\.options\.json
+
+app-build/sketch/FileManager\.h\.cpp
+
+app-build/sketch/IoTDevice\.h
+
+app-build/sketch/NetworkManager\.h
+
+app-build/sketch/Status\.h
