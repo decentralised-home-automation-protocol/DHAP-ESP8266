@@ -4,6 +4,7 @@
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
 IPAddress subnet(255, 255, 255, 0);
+IPAddress broadcast(255, 255, 255, 255);
 
 class NetworkManager
 {
@@ -96,5 +97,13 @@ public:
 
         hasJoinedNetwork = true;
         return hasJoinedNetwork;
+    }
+
+    void broadcastStatus(String status)
+    {
+        Serial.println(status);
+        Udp.beginPacket(broadcast, Udp.remotePort());
+        Udp.write(status.c_str());
+        Udp.endPacket();
     }
 };
