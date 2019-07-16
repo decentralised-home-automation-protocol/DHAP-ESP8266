@@ -178,4 +178,49 @@ public class MainActivity extends AppCompatActivity {
 
         thread.start();
     }
+
+    public void Status(View view){
+        Thread thread = new Thread(() -> {
+            try {
+                DatagramSocket ds;
+                try {
+                    ds = new DatagramSocket();
+                    String str = "ST,10000,2000,T";
+                    InetAddress ip = InetAddress.getByName("192.168.1.255");
+
+                    byte[] buf = new byte[100];
+
+                    DatagramPacket dp = new DatagramPacket(buf, buf.length, ip, 8888);
+                    DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);
+
+                    Log.e(TAG, "run: Sending... Status request " + str);
+                    ds.send(requestPacket);
+                    Log.e(TAG, "run: Waiting to receive...");
+                    boolean leaseExpired = false;
+                    while(!leaseExpired){
+                        ds.receive(dp);
+                        Log.e(TAG, "run: Received");
+                        String s = new String(dp.getData(), 0, dp.getLength());
+                        Log.e(TAG, "run: " + s);
+                        if(dp.getData()[0] == 'L'){
+                            leaseExpired = true;
+                        }
+                    }
+                    Log.e(TAG, "done");
+
+                    ds.close();
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+    }
 }

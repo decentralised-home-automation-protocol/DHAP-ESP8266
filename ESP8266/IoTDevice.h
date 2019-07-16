@@ -24,8 +24,6 @@ public:
     {
         deviceStatus = &devStatus;
 
-        newStatusRegistration("ST,20000,5000,T");
-
         fileManager.mountFileSystem();
 
         if (setupAP)
@@ -73,10 +71,9 @@ public:
         if (numDevicesListening > 0)
         {
             //check if its time to send a status update
-            previousMillis = currentMillis;
             currentMillis = millis();
-
             unsigned long deltaMillis = currentMillis - previousMillis;
+            previousMillis = currentMillis;
 
             timeSinceLastUpdate += deltaMillis;
             if (timeSinceLastUpdate >= minUpdatePeriod)
