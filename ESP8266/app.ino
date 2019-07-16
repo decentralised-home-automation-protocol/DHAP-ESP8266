@@ -20,7 +20,7 @@ void setup()
 
     deviceStatus = new DeviceStatus();
 
-    ioTDevice.setup(true, *deviceStatus);
+    ioTDevice.setup(false, *deviceStatus);
 }
 
 void loop()

@@ -101,6 +101,7 @@ public:
 
     void broadcastStatus(String status)
     {
+        Serial.printf("Broadcasting: ");
         Serial.println(status);
         Udp.beginPacket(broadcast, Udp.remotePort());
         Udp.write(status.c_str());

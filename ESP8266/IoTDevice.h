@@ -1,28 +1,21 @@
 #include "NetworkManager.h"
 #include "FileManager.h"
-#include "Status.h"
+#include "StatusManager.h"
 
 class IoTDevice
 {
 private:
     NetworkManager networkManager;
     FileManager fileManager;
-    Status *deviceStatus;
+    StatusManager statusManager;
 
     char *ssid;
     char *password;
 
-    int numDevicesListening = 0;
-    int minUpdatePeriod = 0;
-    unsigned long previousMillis = 0;
-    unsigned long leaseLengthRemaining = 0;
-    unsigned long currentMillis = 0;
-    unsigned long timeSinceLastUpdate = 0;
-
 public:
-    void setup(bool setupAP, Status &devStatus)
+    void setup(bool setupAP, Status &deviceStatus)
     {
-        deviceStatus = &devStatus;
+        statusManager.setStatusController(deviceStatus);
 
         fileManager.mountFileSystem();
 
@@ -56,45 +49,17 @@ public:
 
     bool commandRecieved(char *iotCommand)
     {
-        sendStatusUpdateIfNeeded();
+        String status = statusManager.sendStatusUpdateIfNeeded();
+        if (status.length() > 0)
+        {
+            networkManager.broadcastStatus(status);
+        }
 
         if (networkManager.newCommandRecieved())
         {
             return handleIncomingPacket(iotCommand);
         }
         return false;
-    }
-
-    void sendStatusUpdateIfNeeded()
-    {
-        //check if someone is listening with a valid lease.
-        if (numDevicesListening > 0)
-        {
-            //check if its time to send a status update
-            currentMillis = millis();
-            unsigned long deltaMillis = currentMillis - previousMillis;
-            previousMillis = currentMillis;
-
-            timeSinceLastUpdate += deltaMillis;
-            if (timeSinceLastUpdate >= minUpdatePeriod)
-            {
-                //send the status update.
-                timeSinceLastUpdate = 0;
-                networkManager.broadcastStatus(deviceStatus->getStatus());
-            }
-
-            if (deltaMillis >= leaseLengthRemaining)
-            {
-                //lease has expired.
-                numDevicesListening = 0;
-                leaseLengthRemaining = 0;
-                networkManager.broadcastStatus("Lease Expired.");
-            }
-            else
-            {
-                leaseLengthRemaining -= deltaMillis;
-            }
-        }
     }
 
     bool handleIncomingPacket(char *iotCommand)
@@ -118,7 +83,7 @@ public:
             else if (isStatusRequest())
             {
                 Serial.println("Status Request Recieved. Adding to List...");
-                newStatusRegistration(networkManager.incomingPacket);
+                statusManager.newStatusRegistration(networkManager.incomingPacket);
             }
             else
             {
@@ -166,39 +131,5 @@ public:
     {
         ssid = strtok(credentials, ",");
         password = strtok(NULL, ",");
-    }
-
-    void newStatusRegistration(char *registration)
-    {
-        char *request = strtok(registration, ",");
-        int leasePeriod = atoi(strtok(NULL, ","));
-        int updatePeriod = atoi(strtok(NULL, ","));
-        char *replyRequired = strtok(NULL, ",");
-
-        addNewListeningDevice(leasePeriod, updatePeriod);
-    }
-
-    void addNewListeningDevice(unsigned long leasePeriod, int updatePeriod)
-    {
-        if (numDevicesListening == 0)
-        {
-            leaseLengthRemaining = leasePeriod;
-            minUpdatePeriod = updatePeriod;
-            timeSinceLastUpdate = 0;
-            previousMillis = millis();
-        }
-        else
-        {
-            if (leasePeriod > leaseLengthRemaining)
-            {
-                leaseLengthRemaining = leasePeriod;
-            }
-
-            if (minUpdatePeriod > updatePeriod)
-            {
-                minUpdatePeriod = updatePeriod;
-            }
-        }
-        numDevicesListening++;
     }
 };
