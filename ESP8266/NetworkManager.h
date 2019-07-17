@@ -64,6 +64,8 @@ public:
 
     void sendReplyPacket(String response)
     {
+        Serial.printf("Sending packet to...");
+        Serial.println(Udp.remoteIP());
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(response.c_str());
         Udp.endPacket();
@@ -87,6 +89,8 @@ public:
                 return false;
             }
         }
+
+        broadcastStatus("Joining network.");
 
         WiFi.mode(WIFI_STA);
 
