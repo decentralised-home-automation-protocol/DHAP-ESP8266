@@ -59,32 +59,35 @@ public:
         hasJoinedNetwork = false;
     }
 
-    void setupWiFi()
+    bool setupWiFi()
     {
         WiFi.mode(WIFI_STA);
 
-        int timeout = 30;
+        int timeout = 20;
         Serial.printf("Attempting to connect...\n");
 
-        while (WiFi.status() != WL_CONNECTED)
+        while (WiFi.status() != WL_CONNECTED && timeout > 0)
         {
             delay(1000);
             Serial.printf("Timeout in...%d\n", timeout);
             timeout--;
-            if (timeout == 0)
-            {
-                hasJoinedNetwork = false;
-                return;
-            }
         }
 
-        Serial.println("WiFi connected");
-        Serial.println("IP address: ");
-        Serial.println(WiFi.localIP());
-
-        hasJoinedNetwork = true;
+        if (timeout > 0)
+        {
+            Serial.println("WiFi connected");
+            Serial.println("IP address: ");
+            Serial.println(WiFi.localIP());
+            hasJoinedNetwork = true;
+        }
+        else
+        {
+            Serial.println("Failed to join a known network");
+            hasJoinedNetwork = false;
+        }
 
         Udp.begin(localUdpPort);
+        return hasJoinedNetwork;
     }
 
     String getLocalIP()

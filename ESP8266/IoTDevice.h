@@ -13,39 +13,22 @@ private:
     char *password;
 
 public:
-    void setup(bool setupAP, Status &deviceStatus)
+    void setup(bool forceSetupAP, Status &deviceStatus)
     {
         statusManager.setStatusController(deviceStatus);
 
         fileManager.mountFileSystem();
 
-        if (setupAP)
+        if (forceSetupAP)
         {
             networkManager.setupAccessPoint();
         }
         else
         {
-            networkManager.setupWiFi();
-
-            // String credentials = fileManager.getSavedNetworkCredentials();
-
-            // if (credentials.length() == 0)
-            // {
-            //     Serial.println("No credentials found!");
-            //     networkManager.setupAccessPoint();
-            // }
-            // else
-            // {
-            //     char *creds = new char[credentials.length()];
-            //     strcpy(creds, credentials.c_str());
-            //     tolkenizeCredentials(creds); //Gets SSID and password from saved credentials string.
-
-            //     if (!networkManager.joinNetwork(ssid, password))
-            //     {
-            //         Serial.println("Failed to join network!");
-            //         networkManager.setupAccessPoint();
-            //     }
-            // }
+            if (!networkManager.setupWiFi())
+            {
+                networkManager.setupAccessPoint();
+            }
         }
     }
 
