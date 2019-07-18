@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     ds = new DatagramSocket();
                     String str = "UI";
-                    InetAddress ip = InetAddress.getByName("192.168.1.101");
+                    InetAddress ip = InetAddress.getByName("192.168.1.102");
 
                     byte[] buf = new byte[4000];
 

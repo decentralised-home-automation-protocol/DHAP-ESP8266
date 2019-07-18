@@ -43,6 +43,8 @@ public:
 
     void setupAccessPoint()
     {
+        WiFi.mode(WIFI_AP_STA);
+
         Serial.print("Setting soft-AP configuration ... ");
         Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
@@ -57,6 +59,34 @@ public:
         hasJoinedNetwork = false;
     }
 
+    void setupWiFi()
+    {
+        WiFi.mode(WIFI_STA);
+
+        int timeout = 30;
+        Serial.printf("Attempting to connect...\n");
+
+        while (WiFi.status() != WL_CONNECTED)
+        {
+            delay(1000);
+            Serial.printf("Timeout in...%d\n", timeout);
+            timeout--;
+            if (timeout == 0)
+            {
+                hasJoinedNetwork = false;
+                return;
+            }
+        }
+
+        Serial.println("WiFi connected");
+        Serial.println("IP address: ");
+        Serial.println(WiFi.localIP());
+
+        hasJoinedNetwork = true;
+
+        Udp.begin(localUdpPort);
+    }
+
     String getLocalIP()
     {
         return WiFi.localIP().toString();
@@ -69,11 +99,11 @@ public:
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(response.c_str());
         Udp.endPacket();
+        delay(200);
     }
 
     bool joinNetwork(char *SSID, char *password)
     {
-        WiFi.mode(WIFI_AP_STA);
         WiFi.begin(SSID, password);
 
         int timeout = 30;
@@ -90,14 +120,13 @@ public:
             }
         }
 
-        broadcastStatus("Joining network.");
+        sendReplyPacket("Joined network.");
 
         WiFi.mode(WIFI_STA);
 
         Serial.println("WiFi connected");
         Serial.println("IP address: ");
         Serial.println(WiFi.localIP());
-        Udp.begin(localUdpPort);
 
         hasJoinedNetwork = true;
         return hasJoinedNetwork;
@@ -110,5 +139,6 @@ public:
         Udp.beginPacket(broadcast, Udp.remotePort());
         Udp.write(status.c_str());
         Udp.endPacket();
+        delay(200);
     }
 };

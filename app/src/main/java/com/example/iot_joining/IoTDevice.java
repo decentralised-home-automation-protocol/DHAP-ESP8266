@@ -51,10 +51,17 @@ public class IoTDevice extends AppCompatActivity {
                     Log.e(TAG, "run: Sending..." + str);
                     ds.send(dp);
                     Log.e(TAG, "run: Waiting to receive...");
+
                     ds.receive(dp);
                     Log.e(TAG, "run: Received");
                     String s = new String(dp.getData(), 0, dp.getLength());
                     Log.e(TAG, "run: " + s);
+
+                    ds.receive(dp);
+                    Log.e(TAG, "run: Received");
+                    s = new String(dp.getData(), 0, dp.getLength());
+                    Log.e(TAG, "run: " + s);
+
                     ds.close();
                 } catch (SocketException e) {
                     e.printStackTrace();

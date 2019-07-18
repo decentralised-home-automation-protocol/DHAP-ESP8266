@@ -25,25 +25,27 @@ public:
         }
         else
         {
-            String credentials = fileManager.getSavedNetworkCredentials();
+            networkManager.setupWiFi();
 
-            if (credentials.length() == 0)
-            {
-                Serial.println("No credentials found!");
-                networkManager.setupAccessPoint();
-            }
-            else
-            {
-                char *creds = new char[credentials.length()];
-                strcpy(creds, credentials.c_str());
-                tolkenizeCredentials(creds); //Gets SSID and password from saved credentials string.
+            // String credentials = fileManager.getSavedNetworkCredentials();
 
-                if (!networkManager.joinNetwork(ssid, password))
-                {
-                    Serial.println("Failed to join network!");
-                    networkManager.setupAccessPoint();
-                }
-            }
+            // if (credentials.length() == 0)
+            // {
+            //     Serial.println("No credentials found!");
+            //     networkManager.setupAccessPoint();
+            // }
+            // else
+            // {
+            //     char *creds = new char[credentials.length()];
+            //     strcpy(creds, credentials.c_str());
+            //     tolkenizeCredentials(creds); //Gets SSID and password from saved credentials string.
+
+            //     if (!networkManager.joinNetwork(ssid, password))
+            //     {
+            //         Serial.println("Failed to join network!");
+            //         networkManager.setupAccessPoint();
+            //     }
+            // }
         }
     }
 
@@ -94,6 +96,7 @@ public:
         }
         else
         {
+            networkManager.sendReplyPacket("Acknowledged Credentials");
             attemptToJoinNetwork();
         }
         return false;
