@@ -63,7 +63,7 @@ public:
     {
         WiFi.mode(WIFI_STA);
 
-        int timeout = 20;
+        int timeout = 30;
         Serial.printf("Attempting to connect...\n");
 
         while (WiFi.status() != WL_CONNECTED && timeout > 0)
