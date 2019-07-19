@@ -19,7 +19,7 @@ public:
         deviceStatus = &devStatus;
     }
 
-    String sendStatusUpdateIfNeeded()
+    String getStatusUpdateIfNeeded()
     {
         //check if someone is listening with a valid lease.
         if (numDevicesListening > 0)
@@ -86,5 +86,14 @@ public:
         char *replyRequired = strtok(NULL, ":,");
 
         addNewListeningDevice(leasePeriod, updatePeriod);
+    }
+
+    void removeListeningDevice()
+    {
+        numDevicesListening--;
+        if (numDevicesListening == 0)
+        {
+            leaseLengthRemaining = 0;
+        }
     }
 };

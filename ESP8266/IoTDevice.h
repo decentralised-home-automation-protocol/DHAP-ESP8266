@@ -35,7 +35,7 @@ public:
 
     bool commandRecieved(char *iotCommand)
     {
-        String status = statusManager.sendStatusUpdateIfNeeded();
+        String status = statusManager.getStatusUpdateIfNeeded();
         if (status.length() > 0)
         {
             networkManager.broadcastStatus(status);
@@ -62,37 +62,34 @@ public:
                 networkManager.sendReplyPacket("110");
                 attemptToJoinNetwork();
             }
-            break;
+            return false;
         case 200: //UI Request
             Serial.println("UI Request Recieved.");
             response = fileManager.readFile();
             networkManager.sendReplyPacket("210:" + response);
             Serial.println("XML File sent.");
-            break;
+            return false;
         case 300: //Discovery Request
             Serial.println("Discovery Request Recieved.");
             response = networkManager.getLocalIP();
             networkManager.sendReplyPacket(response);
             Serial.println("Discovery Packet Sent.");
-            break;
+            return false;
         case 400: //IoT Command
             Serial.println("IoT Command Recieved.");
-
             networkManager.getRecentPacket(temp);
-
             strcpy(iotCommand, temp + 4);
             return true;
-            break;
         case 500: //Status Lease Request
             Serial.println("Status Request Recieved. Adding to List...");
             statusManager.newStatusRegistration(networkManager.incomingPacket);
-            break;
+            return false;
         case 520: //Leave Status Lease
-            break;
+            statusManager.removeListeningDevice();
+            return false;
         default:
             Serial.println("Unknown Packet");
         };
-
         return false;
     }
 
