@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "UI";
+                    String str = "200";
                     InetAddress ip = InetAddress.getByName("192.168.1.102");
 
                     byte[] buf = new byte[4000];
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "DI";
+                    String str = "300";
                     InetAddress ip = InetAddress.getByName("192.168.1.255");
 
                     byte[] buf = new byte[100];
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "ST,10000,2000,T";
+                    String str = "500:10000,2000,T";
                     InetAddress ip = InetAddress.getByName("192.168.1.255");
 
                     byte[] buf = new byte[100];

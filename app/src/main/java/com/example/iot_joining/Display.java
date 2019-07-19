@@ -36,7 +36,8 @@ public class Display extends AppCompatActivity implements OnFragmentInteractionL
         ScrollView scrollView = new ScrollView(this);
         IoTDevice device = new IoTDevice("TV.xml", "TV");
         Intent intent = getIntent();
-        String xml = intent.getStringExtra("xml");
+        String packetData = intent.getStringExtra("xml");
+        String xml = packetData.substring(4); //Remove the first 4 characters as they define the packets type.
         InputStream inputStream = new ByteArrayInputStream(xml.getBytes(Charset.forName("UTF-8")));
 
         device.setDisplayStream(inputStream);
@@ -61,7 +62,7 @@ public class Display extends AppCompatActivity implements OnFragmentInteractionL
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = tag+": " + data;
+                    String str = "400:"+tag+": " + data;
                     InetAddress ip = InetAddress.getByName("192.168.1.102");
 
                     DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);

@@ -80,10 +80,10 @@ public:
 
     void newStatusRegistration(char *registration)
     {
-        char *request = strtok(registration, ",");
-        int leasePeriod = atoi(strtok(NULL, ","));
-        int updatePeriod = atoi(strtok(NULL, ","));
-        char *replyRequired = strtok(NULL, ",");
+        char *request = strtok(registration, ":,");
+        int leasePeriod = atoi(strtok(NULL, ":,"));
+        int updatePeriod = atoi(strtok(NULL, ":,"));
+        char *replyRequired = strtok(NULL, ":,");
 
         addNewListeningDevice(leasePeriod, updatePeriod);
     }

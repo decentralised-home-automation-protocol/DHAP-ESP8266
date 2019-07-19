@@ -43,7 +43,7 @@ public class IoTDevice extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = SSID + "," + password;
+                    String str = "100:" + SSID + "," + password;
                     InetAddress ip = InetAddress.getByName("255.255.255.255");
                     DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);
                     ds.setBroadcast(true);

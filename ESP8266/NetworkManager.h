@@ -110,7 +110,9 @@ public:
         WiFi.begin(SSID, password);
 
         int timeout = 30;
-        Serial.printf("Attempting to connecting to %s...\n", SSID);
+        Serial.printf("Attempting to connect...\n");
+        Serial.printf("SSID: %s\n", SSID);
+        Serial.printf("password: %s\n", password);
 
         while (WiFi.status() != WL_CONNECTED)
         {
@@ -123,7 +125,7 @@ public:
             }
         }
 
-        sendReplyPacket("Joined network.");
+        sendReplyPacket("120");
 
         WiFi.mode(WIFI_STA);
 
@@ -143,5 +145,69 @@ public:
         Udp.write(status.c_str());
         Udp.endPacket();
         delay(200);
+    }
+
+    void discovery()
+    {
+        char reply[32];
+        int flag = 0;
+        if (strcmp(incomingPacket, "EMPTY") == 0)
+        {
+            // censusList is currently empty. add this device to the list
+            sprintf(reply, "%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            Serial.print("Reply packet: ");
+            Serial.println(reply);
+        }
+        else
+        {
+            // check if this device is on the list
+            char *end_str;
+            char *device = strtok_r(incomingPacket, "-", &end_str);
+
+            while (device != NULL)
+            {
+                char *end_token;
+                char *MACAddress = strtok_r(device, ",", &end_token);
+                char *statusBit = strtok_r(NULL, ",", &end_token);
+                char *visibilityBit = strtok_r(NULL, ",", &end_token);
+
+                Serial.printf("%s <=> %s\n", MACAddress, WiFi.macAddress().c_str());
+
+                if (strcmp(MACAddress, WiFi.macAddress().c_str()) == 0)
+                {
+                    // this device is on the list
+                    Serial.println("This device is on the census list");
+                    flag = 1;
+                    break;
+                    // ... check the device details are up to date.
+                }
+
+                device = strtok_r(NULL, "-", &end_str);
+            }
+        }
+
+        if (flag == 0)
+        {
+            sprintf(reply, "%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            Serial.print("Reply packet: ");
+            Serial.println(reply);
+        }
+
+        // send a reply, to the IP address and port that sent us the packet we received
+        if (strlen(reply) != 0)
+        {
+            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+            Udp.write(reply);
+            Udp.endPacket();
+            delay(2000); // so that ack can be sent
+        }
+    }
+
+    int getRecentPacketType()
+    {
+        char packet[255];
+        strcpy(packet, incomingPacket);
+        char *type = strtok(packet, ":");
+        return atoi(type);
     }
 };

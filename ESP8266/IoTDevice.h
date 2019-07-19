@@ -11,6 +11,7 @@ private:
 
     char *ssid;
     char *password;
+    char temp[255];
 
 public:
     void setup(bool forceSetupAP, Status &deviceStatus)
@@ -49,73 +50,66 @@ public:
 
     bool handleIncomingPacket(char *iotCommand)
     {
-        if (networkManager.hasJoinedNetwork)
+        int packetType = networkManager.getRecentPacketType();
+        Serial.printf("PACKET TYPE %d\n", packetType);
+        String response;
+
+        switch (packetType)
         {
-            if (isUIRequest())
+        case 100: //Joining credentials
+            if (!networkManager.hasJoinedNetwork)
             {
-                Serial.println("UI Request Recieved.");
-                String response = fileManager.readFile();
-                networkManager.sendReplyPacket(response);
-                Serial.println("XML File sent.");
+                networkManager.sendReplyPacket("110");
+                attemptToJoinNetwork();
             }
-            else if (isDiscoveryRequest())
-            {
-                Serial.println("Discovery Request Recieved.");
-                String response = networkManager.getLocalIP();
-                networkManager.sendReplyPacket(response);
-                Serial.println("Discovery Packet Sent.");
-            }
-            else if (isStatusRequest())
-            {
-                Serial.println("Status Request Recieved. Adding to List...");
-                statusManager.newStatusRegistration(networkManager.incomingPacket);
-            }
-            else
-            {
-                Serial.println("IoT Command Recieved.");
-                networkManager.getRecentPacket(iotCommand);
-                return true;
-            }
-        }
-        else
-        {
-            networkManager.sendReplyPacket("Acknowledged Credentials");
-            attemptToJoinNetwork();
-        }
+            break;
+        case 200: //UI Request
+            Serial.println("UI Request Recieved.");
+            response = fileManager.readFile();
+            networkManager.sendReplyPacket("210:" + response);
+            Serial.println("XML File sent.");
+            break;
+        case 300: //Discovery Request
+            Serial.println("Discovery Request Recieved.");
+            response = networkManager.getLocalIP();
+            networkManager.sendReplyPacket(response);
+            Serial.println("Discovery Packet Sent.");
+            break;
+        case 400: //IoT Command
+            Serial.println("IoT Command Recieved.");
+
+            networkManager.getRecentPacket(temp);
+
+            strcpy(iotCommand, temp + 4);
+            return true;
+            break;
+        case 500: //Status Lease Request
+            Serial.println("Status Request Recieved. Adding to List...");
+            statusManager.newStatusRegistration(networkManager.incomingPacket);
+            break;
+        case 520: //Leave Status Lease
+            break;
+        default:
+            Serial.println("Unknown Packet");
+        };
+
         return false;
     }
 
     void attemptToJoinNetwork()
     {
         tolkenizeCredentials(networkManager.incomingPacket);
-        if (networkManager.joinNetwork(ssid, password))
-        {
-            fileManager.saveNetworkCredentials(ssid, password);
-        }
-        else
+        if (!networkManager.joinNetwork(ssid, password))
         {
             Serial.println("Failed to join network!");
+            networkManager.sendReplyPacket("130");
         }
-    }
-
-    bool isUIRequest()
-    {
-        return networkManager.incomingPacket[0] == 'U' && networkManager.incomingPacket[1] == 'I';
-    }
-
-    bool isDiscoveryRequest()
-    {
-        return networkManager.incomingPacket[0] == 'D' && networkManager.incomingPacket[1] == 'I';
-    }
-
-    bool isStatusRequest()
-    {
-        return networkManager.incomingPacket[0] == 'S' && networkManager.incomingPacket[1] == 'T';
     }
 
     void tolkenizeCredentials(char *credentials)
     {
-        ssid = strtok(credentials, ",");
-        password = strtok(NULL, ",");
+        char *type = strtok(credentials, ":,");
+        ssid = strtok(NULL, ":,");
+        password = strtok(NULL, ":,");
     }
 };
