@@ -13,6 +13,8 @@ private:
     char *password;
     char temp[255];
 
+    const int PACKET_TYPE_HEADER_LENGTH = 4;
+
 public:
     void setup(bool forceSetupAP, Status &deviceStatus)
     {
@@ -50,43 +52,22 @@ public:
 
     bool handleIncomingPacket(char *iotCommand)
     {
-        int packetType = networkManager.getRecentPacketType();
-        Serial.printf("PACKET TYPE %d\n", packetType);
-        String response;
-
-        switch (packetType)
+        switch (networkManager.getRecentPacketType())
         {
         case 100: //Joining credentials
-            if (!networkManager.hasJoinedNetwork)
-            {
-                networkManager.sendReplyPacket("110");
-                attemptToJoinNetwork();
-            }
+            joiningPacket();
             return false;
         case 200: //UI Request
-            Serial.println("UI Request Recieved.");
-            response = fileManager.readFile();
-            networkManager.sendReplyPacket("210:" + response);
-            Serial.println("XML File sent.");
+            uiRequest();
             return false;
         case 300: //Discovery Request
-            Serial.println("Discovery Request Recieved.");
-            response = networkManager.getLocalIP();
-            networkManager.sendReplyPacket(response);
-            Serial.println("Discovery Packet Sent.");
+            discoveryRequest();
             return false;
         case 400: //IoT Command
-            Serial.println("IoT Command Recieved.");
-            networkManager.getRecentPacket(temp);
-            strcpy(iotCommand, temp + 4);
+            getIoTCommand(iotCommand);
             return true;
         case 500: //Status Lease Request
-            Serial.println("Status Request Recieved. Adding to List...");
-            response = statusManager.newStatusRegistration(networkManager.incomingPacket);
-            if (response.length() > 0)
-            {
-                networkManager.sendReplyPacket(response.c_str());
-            }
+            statusLeaseRequest();
             return false;
         case 520: //Leave Status Lease
             statusManager.removeListeningDevice();
@@ -97,20 +78,56 @@ public:
         return false;
     }
 
-    void attemptToJoinNetwork()
+    void joiningPacket()
     {
-        tolkenizeCredentials(networkManager.incomingPacket);
-        if (!networkManager.joinNetwork(ssid, password))
+        if (!networkManager.hasJoinedNetwork)
         {
-            Serial.println("Failed to join network!");
-            networkManager.sendReplyPacket("130");
+            networkManager.sendReplyPacket("110");
+
+            //Tokenize Credentials
+            networkManager.getRecentPacket(temp);
+            char *type = strtok(temp, ":,");
+            ssid = strtok(NULL, ":,");
+            password = strtok(NULL, ":,");
+
+            if (!networkManager.joinNetwork(ssid, password))
+            {
+                Serial.println("Failed to join network!");
+                networkManager.sendReplyPacket("130");
+            }
         }
     }
 
-    void tolkenizeCredentials(char *credentials)
+    void uiRequest()
     {
-        char *type = strtok(credentials, ":,");
-        ssid = strtok(NULL, ":,");
-        password = strtok(NULL, ":,");
+        Serial.println("UI Request Recieved.");
+        String response = fileManager.readFile();
+        networkManager.sendReplyPacket("210:" + response);
+        Serial.println("XML File sent.");
+    }
+
+    void discoveryRequest()
+    {
+        Serial.println("Discovery Request Recieved.");
+        String response = networkManager.getMacAddress();
+        networkManager.sendReplyPacket(response);
+        Serial.println("Discovery Packet Sent.");
+    }
+
+    void getIoTCommand(char *iotCommand)
+    {
+        Serial.println("IoT Command Recieved.");
+        networkManager.getRecentPacket(temp);
+        strcpy(iotCommand, temp + PACKET_TYPE_HEADER_LENGTH);
+    }
+
+    void statusLeaseRequest()
+    {
+        Serial.println("Status Request Recieved. Adding to List...");
+        String response = statusManager.newStatusRegistration(networkManager.incomingPacket);
+        if (response.length() > 0)
+        {
+            networkManager.sendReplyPacket(response.c_str());
+        }
     }
 };
