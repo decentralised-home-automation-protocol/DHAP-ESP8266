@@ -16,8 +16,6 @@ private:
 public:
     void setup(bool forceSetupAP, Status &deviceStatus)
     {
-        statusManager.setStatusController(deviceStatus);
-
         fileManager.mountFileSystem();
 
         if (forceSetupAP)
@@ -31,6 +29,8 @@ public:
                 networkManager.setupAccessPoint();
             }
         }
+
+        statusManager.setStatusController(deviceStatus, networkManager.getMacAddress());
     }
 
     bool commandRecieved(char *iotCommand)
@@ -82,7 +82,11 @@ public:
             return true;
         case 500: //Status Lease Request
             Serial.println("Status Request Recieved. Adding to List...");
-            statusManager.newStatusRegistration(networkManager.incomingPacket);
+            response = statusManager.newStatusRegistration(networkManager.incomingPacket);
+            if (response.length() > 0)
+            {
+                networkManager.sendReplyPacket(response.c_str());
+            }
             return false;
         case 520: //Leave Status Lease
             statusManager.removeListeningDevice();

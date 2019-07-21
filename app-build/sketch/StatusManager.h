@@ -19,7 +19,7 @@ public:
         deviceStatus = &devStatus;
     }
 
-    String sendStatusUpdateIfNeeded()
+    String getStatusUpdateIfNeeded()
     {
         //check if someone is listening with a valid lease.
         if (numDevicesListening > 0)
@@ -35,7 +35,6 @@ public:
                 //send the status update.
                 timeSinceLastUpdate = 0;
                 return deviceStatus->getStatus();
-                // networkManager.broadcastStatus(deviceStatus->getStatus());
             }
 
             if (deltaMillis >= leaseLengthRemaining)
@@ -43,14 +42,14 @@ public:
                 //lease has expired.
                 numDevicesListening = 0;
                 leaseLengthRemaining = 0;
-                return "Lease Expired.";
-                // networkManager.broadcastStatus("Lease Expired.");
+                return "530";
             }
             else
             {
                 leaseLengthRemaining -= deltaMillis;
             }
         }
+        return "";
     }
 
     void addNewListeningDevice(unsigned long leasePeriod, int updatePeriod)
@@ -77,13 +76,40 @@ public:
         numDevicesListening++;
     }
 
-    void newStatusRegistration(char *registration)
+    String newStatusRegistration(char *registration)
     {
-        char *request = strtok(registration, ",");
-        int leasePeriod = atoi(strtok(NULL, ","));
-        int updatePeriod = atoi(strtok(NULL, ","));
-        char *replyRequired = strtok(NULL, ",");
+        char *request = strtok(registration, ":,");
+        int leasePeriod = atoi(strtok(NULL, ":,"));
+        int updatePeriod = atoi(strtok(NULL, ":,"));
+        char *replyRequired = strtok(NULL, ":,");
 
         addNewListeningDevice(leasePeriod, updatePeriod);
+
+        if (strcmp(replyRequired, "T"))
+        {
+            return generateReply(leasePeriod, updatePeriod);
+        }
+    }
+
+    String generateReply(int leasePeriod, int updatePeriod)
+    {
+        int deviceMaxLeaseLength = deviceStatus->getMaxLeaseLength();
+        int deviceMinUpdatePeriod = deviceStatus->getMinUpdatePeriod();
+
+        String response = "510:";
+
+        response += deviceMaxLeaseLength > leasePeriod ? leasePeriod : deviceMaxLeaseLength;
+        response += deviceMinUpdatePeriod > updatePeriod ? updatePeriod : deviceMinUpdatePeriod;
+
+        return response;
+    }
+
+    void removeListeningDevice()
+    {
+        numDevicesListening--;
+        if (numDevicesListening == 0)
+        {
+            leaseLengthRemaining = 0;
+        }
     }
 };

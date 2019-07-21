@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "500:10000,2000,T";
+                    String str = "500:10000,1000,F";
                     InetAddress ip = InetAddress.getByName("192.168.1.255");
 
                     byte[] buf = new byte[100];
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "run: Received");
                         String s = new String(dp.getData(), 0, dp.getLength());
                         Log.e(TAG, "run: " + s);
-                        if(dp.getData()[0] == 'L'){
+                        if(dp.getData()[0] == '5' && dp.getData()[0] == '1'){
                             leaseExpired = true;
                         }
                     }

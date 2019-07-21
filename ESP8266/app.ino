@@ -7,6 +7,18 @@ public:
     {
         return "All good.";
     }
+
+    virtual int getMaxLeaseLength()
+    {
+        //20 minutes maximum lease length.
+        return 200000;
+    }
+
+    virtual int getMinUpdatePeriod()
+    {
+        //250ms minimum update period.
+        return 250;
+    }
 };
 
 IoTDevice ioTDevice;

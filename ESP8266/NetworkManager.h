@@ -95,6 +95,11 @@ public:
         return WiFi.localIP().toString();
     }
 
+    String getMacAddress()
+    {
+        return WiFi.macAddress();
+    }
+
     void sendReplyPacket(String response)
     {
         Serial.printf("Sending packet to...");
