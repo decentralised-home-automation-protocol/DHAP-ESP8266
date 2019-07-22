@@ -110,7 +110,6 @@ public:
     {
         Serial.println("Discovery Request Recieved.");
         networkManager.discovery();
-        Serial.println("Discovery Packet Sent.");
     }
 
     void getIoTCommand(char *iotCommand)

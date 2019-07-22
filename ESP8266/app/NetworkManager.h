@@ -156,21 +156,8 @@ public:
     void discovery()
     {
         char reply[32];
-        char concatenatedList[255];
-        strcpy(concatenatedList, incomingPacket);
 
-        int flag = 0;
-        if (strcmp(incomingPacket, "300") == 0)
-        {
-            // censusList is currently empty. add this device to the list
-            sprintf(reply, "310|%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
-            Serial.print("Census list is empty\n");
-            Serial.print("Reply packet: ");
-            Serial.println(reply);
-            sendReplyPacket(reply);
-            return;
-        }
-        else
+        if (strcmp(incomingPacket, "300") != 0)
         {
             // check if this device is on the list
             char *end_str;
@@ -195,15 +182,17 @@ public:
 
                 device = strtok_r(NULL, "-", &end_str);
             }
-            Serial.print("Adding device to census list\n");
-
-            sprintf(reply, "-%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
-            strcat(concatenatedList, reply);
-            concatenatedList[1] = '1';
-            Serial.print("Reply packet: ");
-            Serial.println(concatenatedList);
-            sendReplyPacket(concatenatedList);
+            Serial.print("Device not in census list\n");
         }
+        else
+        {
+            Serial.print("Census list is empty\n");
+        }
+
+        sprintf(reply, "310|%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+        Serial.print("Reply packet: ");
+        Serial.println(reply);
+        sendReplyPacket(reply);
     }
 
     int getRecentPacketType()

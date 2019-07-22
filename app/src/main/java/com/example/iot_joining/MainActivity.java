@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "300|B4:E6:2D:67:B9:10,0,0-B4:E6:2D:97:B8:10,0,0-B8:E6:2D:67:B8:10,0,0";
+                    String str = "300|B4:E6:2D:67:B9:10,0,0-B4:E6:2D:97:B8:10,0,0-B8:E6:2D:67:B8:10,0,0-B4:E6:2D:67:B8:10,0,0";
                     InetAddress ip = InetAddress.getByName("192.168.1.255");
 
                     byte[] buf = new byte[100];
