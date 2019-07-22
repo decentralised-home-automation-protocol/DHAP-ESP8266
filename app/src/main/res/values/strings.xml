@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">iot-joining</string>
-    <string name="scan_wifi">scan_wifi</string>
-    <string name="wifi_networks_found">wifi_networks_found</string>
-    <string name="connected_to">Connected to:</string>
-</resources>
