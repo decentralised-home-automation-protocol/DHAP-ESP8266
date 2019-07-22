@@ -21,8 +21,8 @@ public:
     {
         deviceStatus = &devStatus;
         macAddress = mac;
-        endLeaseResponse = "530:" + macAddress;
-        statusResponseHeader = "540:" + macAddress + ",";
+        endLeaseResponse = "530|" + macAddress;
+        statusResponseHeader = "540|" + macAddress + ",";
     }
 
     String getStatusUpdateIfNeeded()
@@ -84,10 +84,10 @@ public:
 
     String newStatusRegistration(char *registration)
     {
-        char *request = strtok(registration, ":,");
-        int leasePeriod = atoi(strtok(NULL, ":,"));
-        int updatePeriod = atoi(strtok(NULL, ":,"));
-        char *replyRequired = strtok(NULL, ":,");
+        char *request = strtok(registration, "|,");
+        int leasePeriod = atoi(strtok(NULL, "|,"));
+        int updatePeriod = atoi(strtok(NULL, "|,"));
+        char *replyRequired = strtok(NULL, "|,");
 
         //ensure values are within max and min lengths.
         int deviceMaxLeaseLength = deviceStatus->getMaxLeaseLength();
@@ -101,7 +101,7 @@ public:
         {
             char reply[45];
 
-            sprintf(reply, "510:%s,%lu,%d", macAddress.c_str(), allocatedLeasePeriod, allocatedUpdatePeriod);
+            sprintf(reply, "510|%s,%lu,%d", macAddress.c_str(), allocatedLeasePeriod, allocatedUpdatePeriod);
 
             return reply;
         }

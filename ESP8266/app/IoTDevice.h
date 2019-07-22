@@ -86,9 +86,9 @@ public:
 
             //Tokenize Credentials
             networkManager.getRecentPacket(temp);
-            char *type = strtok(temp, ":,");
-            ssid = strtok(NULL, ":,");
-            password = strtok(NULL, ":,");
+            char *type = strtok(temp, "|,");
+            ssid = strtok(NULL, "|,");
+            password = strtok(NULL, "|,");
 
             if (!networkManager.joinNetwork(ssid, password))
             {
@@ -102,7 +102,7 @@ public:
     {
         Serial.println("UI Request Recieved.");
         String response = fileManager.readFile();
-        networkManager.sendReplyPacket("210:" + response);
+        networkManager.sendReplyPacket("210|" + response);
         Serial.println("XML File sent.");
     }
 

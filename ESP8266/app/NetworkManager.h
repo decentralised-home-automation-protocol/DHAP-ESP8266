@@ -163,7 +163,7 @@ public:
         if (strcmp(incomingPacket, "300") == 0)
         {
             // censusList is currently empty. add this device to the list
-            sprintf(reply, "310:%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            sprintf(reply, "310|%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
             Serial.print("Census list is empty\n");
             Serial.print("Reply packet: ");
             Serial.println(reply);
@@ -210,7 +210,7 @@ public:
     {
         char packet[255];
         strcpy(packet, incomingPacket);
-        char *type = strtok(packet, ":");
+        char *type = strtok(packet, "|");
         return atoi(type);
     }
 };

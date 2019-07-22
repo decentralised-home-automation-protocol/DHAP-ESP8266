@@ -62,7 +62,7 @@ public class Display extends AppCompatActivity implements OnFragmentInteractionL
                 DatagramSocket ds;
                 try {
                     ds = new DatagramSocket();
-                    String str = "400:"+tag+": " + data;
+                    String str = "400|"+tag+": " + data;
                     InetAddress ip = InetAddress.getByName("192.168.1.102");
 
                     DatagramPacket requestPacket = new DatagramPacket(str.getBytes(), str.length(), ip, 8888);
