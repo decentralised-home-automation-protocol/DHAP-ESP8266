@@ -21,3 +21,11 @@ app-build/sketch/IoTDevice\.h
 app-build/sketch/NetworkManager\.h
 
 app-build/sketch/Status\.h
+
+app-build/sketch/
+
+app-build/core/
+
+app-build/libraries/ESP8266WiFi/
+
+app-build/

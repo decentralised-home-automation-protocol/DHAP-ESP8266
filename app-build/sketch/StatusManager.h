@@ -5,18 +5,24 @@ class StatusManager
 {
 private:
     Status *deviceStatus;
+    String macAddress;
+    String endLeaseResponse;
+    String statusResponseHeader;
 
     int numDevicesListening = 0;
-    int minUpdatePeriod = 0;
+    int currentUpdatePeriod = 0;
     unsigned long previousMillis = 0;
     unsigned long leaseLengthRemaining = 0;
     unsigned long currentMillis = 0;
     unsigned long timeSinceLastUpdate = 0;
 
 public:
-    void setStatusController(Status &devStatus)
+    void setStatusController(Status &devStatus, String mac)
     {
         deviceStatus = &devStatus;
+        macAddress = mac;
+        endLeaseResponse = "530:" + macAddress;
+        statusResponseHeader = "540:" + macAddress + ",";
     }
 
     String getStatusUpdateIfNeeded()
@@ -28,25 +34,25 @@ public:
             currentMillis = millis();
             unsigned long deltaMillis = currentMillis - previousMillis;
             previousMillis = currentMillis;
-
             timeSinceLastUpdate += deltaMillis;
-            if (timeSinceLastUpdate >= minUpdatePeriod)
-            {
-                //send the status update.
-                timeSinceLastUpdate = 0;
-                return deviceStatus->getStatus();
-            }
 
             if (deltaMillis >= leaseLengthRemaining)
             {
                 //lease has expired.
                 numDevicesListening = 0;
                 leaseLengthRemaining = 0;
-                return "530";
+                return endLeaseResponse;
             }
             else
             {
                 leaseLengthRemaining -= deltaMillis;
+            }
+
+            if (timeSinceLastUpdate >= currentUpdatePeriod)
+            {
+                //send the status update.
+                timeSinceLastUpdate = 0;
+                return statusResponseHeader + deviceStatus->getStatus();
             }
         }
         return "";
@@ -57,7 +63,7 @@ public:
         if (numDevicesListening == 0)
         {
             leaseLengthRemaining = leasePeriod;
-            minUpdatePeriod = updatePeriod;
+            currentUpdatePeriod = updatePeriod;
             timeSinceLastUpdate = 0;
             previousMillis = millis();
         }
@@ -68,9 +74,9 @@ public:
                 leaseLengthRemaining = leasePeriod;
             }
 
-            if (minUpdatePeriod > updatePeriod)
+            if (currentUpdatePeriod > updatePeriod)
             {
-                minUpdatePeriod = updatePeriod;
+                currentUpdatePeriod = updatePeriod;
             }
         }
         numDevicesListening++;
@@ -83,25 +89,26 @@ public:
         int updatePeriod = atoi(strtok(NULL, ":,"));
         char *replyRequired = strtok(NULL, ":,");
 
-        addNewListeningDevice(leasePeriod, updatePeriod);
-
-        if (strcmp(replyRequired, "T"))
-        {
-            return generateReply(leasePeriod, updatePeriod);
-        }
-    }
-
-    String generateReply(int leasePeriod, int updatePeriod)
-    {
+        //ensure values are within max and min lengths.
         int deviceMaxLeaseLength = deviceStatus->getMaxLeaseLength();
         int deviceMinUpdatePeriod = deviceStatus->getMinUpdatePeriod();
+        unsigned long allocatedLeasePeriod = deviceMaxLeaseLength > leasePeriod ? leasePeriod : deviceMaxLeaseLength;
+        int allocatedUpdatePeriod = deviceMinUpdatePeriod > updatePeriod ? deviceMinUpdatePeriod : updatePeriod;
 
-        String response = "510:";
+        addNewListeningDevice(allocatedLeasePeriod, allocatedUpdatePeriod);
 
-        response += deviceMaxLeaseLength > leasePeriod ? leasePeriod : deviceMaxLeaseLength;
-        response += deviceMinUpdatePeriod > updatePeriod ? updatePeriod : deviceMinUpdatePeriod;
+        if (replyRequired[0] == 'T')
+        {
+            char reply[45];
 
-        return response;
+            sprintf(reply, "510:%s,%lu,%d", macAddress.c_str(), allocatedLeasePeriod, allocatedUpdatePeriod);
+
+            return reply;
+        }
+        else
+        {
+            return "";
+        }
     }
 
     void removeListeningDevice()
