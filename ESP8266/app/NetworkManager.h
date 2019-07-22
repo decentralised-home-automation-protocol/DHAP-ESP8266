@@ -14,6 +14,7 @@ private:
     unsigned int localUdpPort = 8888; // local port to listen on
     char *DEFAULT_SSID = "ESPsoftAP_01";
     char *DEFAULT_PASSWORD = "passforap";
+    const int PACKET_TYPE_HEADER_LENGTH = 4;
 
 public:
     char incomingPacket[255]; // buffer for incoming packets
@@ -155,19 +156,25 @@ public:
     void discovery()
     {
         char reply[32];
+        char concatenatedList[255];
+        strcpy(concatenatedList, incomingPacket);
+
         int flag = 0;
-        if (strcmp(incomingPacket, "EMPTY") == 0)
+        if (strcmp(incomingPacket, "300") == 0)
         {
             // censusList is currently empty. add this device to the list
-            sprintf(reply, "%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            sprintf(reply, "310:%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            Serial.print("Census list is empty\n");
             Serial.print("Reply packet: ");
             Serial.println(reply);
+            sendReplyPacket(reply);
+            return;
         }
         else
         {
             // check if this device is on the list
             char *end_str;
-            char *device = strtok_r(incomingPacket, "-", &end_str);
+            char *device = strtok_r(incomingPacket + PACKET_TYPE_HEADER_LENGTH, "-", &end_str);
 
             while (device != NULL)
             {
@@ -182,29 +189,20 @@ public:
                 {
                     // this device is on the list
                     Serial.println("This device is on the census list");
-                    flag = 1;
-                    break;
-                    // ... check the device details are up to date.
+                    return;
+                    // TODO: check the device details are up to date.
                 }
 
                 device = strtok_r(NULL, "-", &end_str);
             }
-        }
+            Serial.print("Adding device to census list\n");
 
-        if (flag == 0)
-        {
-            sprintf(reply, "%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            sprintf(reply, "-%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+            strcat(concatenatedList, reply);
+            concatenatedList[1] = '1';
             Serial.print("Reply packet: ");
-            Serial.println(reply);
-        }
-
-        // send a reply, to the IP address and port that sent us the packet we received
-        if (strlen(reply) != 0)
-        {
-            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-            Udp.write(reply);
-            Udp.endPacket();
-            delay(2000); // so that ack can be sent
+            Serial.println(concatenatedList);
+            sendReplyPacket(concatenatedList);
         }
     }
 

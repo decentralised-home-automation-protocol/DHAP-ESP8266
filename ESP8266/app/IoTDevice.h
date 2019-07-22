@@ -109,8 +109,7 @@ public:
     void discoveryRequest()
     {
         Serial.println("Discovery Request Recieved.");
-        String response = networkManager.getMacAddress();
-        networkManager.sendReplyPacket(response);
+        networkManager.discovery();
         Serial.println("Discovery Packet Sent.");
     }
 
