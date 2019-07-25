@@ -192,6 +192,9 @@ public:
         sprintf(reply, "310|%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
         Serial.print("Reply packet: ");
         Serial.println(reply);
+
+        randomSeed(WiFi.macAddress()[5]);
+        delay(random(0, 200));
         sendReplyPacket(reply);
     }
 
