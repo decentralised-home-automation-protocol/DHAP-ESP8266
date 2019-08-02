@@ -63,6 +63,11 @@ public:
         {
             return handleIncomingPacket(iotCommand);
         }
+
+        if (!networkManager.hasJoinedNetwork)
+        {            
+            networkManager.joinWiFiLoop(ssid, password);
+        }
         return false;
     }
 

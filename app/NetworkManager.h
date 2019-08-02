@@ -16,6 +16,11 @@ private:
     char *DEFAULT_PASSWORD = "passforap";
     const int PACKET_TYPE_HEADER_LENGTH = 4;
 
+    unsigned long previousMillis = 0;
+    unsigned long leaseLengthRemaining = 0;
+    unsigned long currentMillis = 0;
+    unsigned long timeSinceLastUpdate = 0;
+
 public:
     char incomingPacket[255]; // buffer for incoming packets
     bool hasJoinedNetwork = false;
@@ -97,7 +102,12 @@ public:
             timeout--;
             if (timeout == 0)
             {
+                previousMillis = millis();
                 return false;
+            }
+
+            if(checkForNewJoiningPacket()){
+                return true;
             }
         }
 
@@ -178,5 +188,38 @@ public:
         strcpy(packet, incomingPacket);
         char *type = strtok(packet, "|");
         return atoi(type);
+    }
+
+    void joinWiFiLoop(char *SSID, char *password)
+    {
+        //check if its time to send a status update
+        currentMillis = millis();
+        unsigned long deltaMillis = currentMillis - previousMillis;
+        previousMillis = currentMillis;
+        timeSinceLastUpdate += deltaMillis;
+
+        if (timeSinceLastUpdate > 120000)
+        {
+            timeSinceLastUpdate = 0;
+            Serial.println("Attempting to join again");
+            joinNetwork(SSID, password, false);
+        }
+    }
+
+    bool checkForNewJoiningPacket(){
+        if (newCommandRecieved())
+        {
+            if (getRecentPacketType() == 100)
+            {
+                char temp[255];
+                getRecentPacket(temp);
+
+                char *type = strtok(temp, "|,");
+                char *newSsid = strtok(NULL, "|,");
+                char *newPassword = strtok(NULL, "|,");
+
+                return joinNetwork(newSsid, newPassword, true);
+            }
+        }
     }
 };
