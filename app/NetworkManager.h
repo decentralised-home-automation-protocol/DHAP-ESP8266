@@ -44,7 +44,7 @@ public:
 
     void setupAccessPoint()
     {
-        WiFi.mode(WIFI_AP_STA);
+        WiFi.mode(WIFI_AP);
 
         Serial.print("Setting soft-AP configuration ... ");
         Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
@@ -58,37 +58,6 @@ public:
         Udp.begin(localUdpPort);
         Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.softAPIP().toString().c_str(), localUdpPort);
         hasJoinedNetwork = false;
-    }
-
-    bool setupWiFi()
-    {
-        WiFi.mode(WIFI_STA);
-
-        int timeout = 30;
-        Serial.printf("Attempting to connect...\n");
-
-        while (WiFi.status() != WL_CONNECTED && timeout > 0)
-        {
-            delay(1000);
-            Serial.printf("Timeout in...%d\n", timeout);
-            timeout--;
-        }
-
-        if (timeout > 0)
-        {
-            Serial.println("WiFi connected");
-            Serial.println("IP address: ");
-            Serial.println(WiFi.localIP());
-            hasJoinedNetwork = true;
-        }
-        else
-        {
-            Serial.println("Failed to join a known network");
-            hasJoinedNetwork = false;
-        }
-
-        Udp.begin(localUdpPort);
-        return hasJoinedNetwork;
     }
 
     String getLocalIP()
@@ -111,11 +80,11 @@ public:
         delay(200);
     }
 
-    bool joinNetwork(char *SSID, char *password)
+    bool joinNetwork(char *SSID, char *password, bool sendReply)
     {
         WiFi.begin(SSID, password);
 
-        int timeout = 30;
+        int timeout = 20;
         Serial.printf("Attempting to connect...\n");
         Serial.printf("SSID: %s\n", SSID);
         Serial.printf("password: %s\n", password);
@@ -123,6 +92,7 @@ public:
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(1000);
+
             Serial.printf("Timeout in...%d\n", timeout);
             timeout--;
             if (timeout == 0)
@@ -131,9 +101,13 @@ public:
             }
         }
 
-        sendReplyPacket("120");
+        if (sendReply)
+        {
+            sendReplyPacket("120");
+        }
 
         WiFi.mode(WIFI_STA);
+        Udp.begin(localUdpPort);
 
         Serial.println("WiFi connected");
         Serial.println("IP address: ");

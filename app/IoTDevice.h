@@ -26,9 +26,25 @@ public:
         }
         else
         {
-            if (!networkManager.setupWiFi())
+            String credentials = fileManager.getSavedNetworkCredentials();
+
+            if (credentials.length() == 0)
             {
+                Serial.println("No credentials found!");
                 networkManager.setupAccessPoint();
+            }
+            else
+            {
+                char *creds = new char[credentials.length()];
+                strcpy(creds, credentials.c_str());
+                ssid = strtok(creds, "|,");
+                password = strtok(NULL, "|,");
+
+                if (!networkManager.joinNetwork(ssid, password, false))
+                {
+                    Serial.println("Failed to join network!");
+                    networkManager.setupAccessPoint();
+                }
             }
         }
 
@@ -90,10 +106,14 @@ public:
             ssid = strtok(NULL, "|,");
             password = strtok(NULL, "|,");
 
-            if (!networkManager.joinNetwork(ssid, password))
+            if (!networkManager.joinNetwork(ssid, password, true))
             {
                 Serial.println("Failed to join network!");
                 networkManager.sendReplyPacket("130");
+            }
+            else
+            {
+                fileManager.saveNetworkCredentials(ssid, password);
             }
         }
     }
