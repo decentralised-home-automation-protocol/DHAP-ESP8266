@@ -105,7 +105,7 @@ public:
     {
         Serial.printf("Sending packet to...");
         Serial.println(Udp.remoteIP());
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.beginPacket(Udp.remoteIP(), localUdpPort);
         Udp.write(response.c_str());
         Udp.endPacket();
         delay(200);
@@ -147,7 +147,7 @@ public:
     {
         Serial.printf("Broadcasting: ");
         Serial.println(status);
-        Udp.beginPacket(broadcast, Udp.remotePort());
+        Udp.beginPacket(broadcast, localUdpPort);
         Udp.write(status.c_str());
         Udp.endPacket();
         delay(200);
