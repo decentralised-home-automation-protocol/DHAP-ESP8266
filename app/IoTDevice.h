@@ -8,10 +8,13 @@ private:
     NetworkManager networkManager;
     FileManager fileManager;
     StatusManager statusManager;
+    String header;
 
     char *ssid;
     char *password;
     char temp[255];
+
+    char *discoveryHeader;
 
     const int PACKET_TYPE_HEADER_LENGTH = 4;
 
@@ -47,6 +50,8 @@ public:
                 }
             }
         }
+        header = fileManager.getFileHeader();
+        Serial.println("File header: " + header);
 
         statusManager.setStatusController(deviceStatus, networkManager.getMacAddress());
     }
@@ -83,6 +88,9 @@ public:
             return false;
         case 300: //Discovery Request
             discoveryRequest();
+            return false;
+        case 320: //Discovery Header Request
+            discoveryHeaderRequest();
             return false;
         case 400: //IoT Command
             getIoTCommand(iotCommand);
@@ -135,6 +143,12 @@ public:
     {
         Serial.println("Discovery Request Recieved.");
         networkManager.discovery();
+    }
+
+    void discoveryHeaderRequest()
+    {
+        Serial.println("Discovery Header Request Recieved.");
+        networkManager.sendReplyPacket(header);
     }
 
     void getIoTCommand(char *iotCommand)

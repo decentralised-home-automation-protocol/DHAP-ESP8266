@@ -19,6 +19,56 @@ public:
         }
     }
 
+    String getFileHeader()
+    {
+        File file = SPIFFS.open(xmlFileName, "r");
+        char name[30];
+        char room[30];
+        char header[60];
+
+        Serial.println("Getting file header");
+
+        char *nameStart = "<name>";
+        char *nameEnd = "</name>";
+        char *roomStart = "<room>";
+        char *roomEnd = "</room>";
+
+        while (file.position() < file.size())
+        {
+            String lineString = file.readString();
+            const char *line = lineString.c_str();
+
+            findString(line, nameStart, nameEnd, name);
+
+            findString(line, roomStart, roomEnd, room);
+        }
+
+        file.close();
+
+        sprintf(header, "%s,%s", name, room);
+
+        return header;
+    }
+
+    void findString(const char *line, char *start, char *end, char* dest)
+    {
+        char *result = strstr(line, start);
+        if (result != NULL)
+        {
+            int startPosition = result - line;
+
+            result = strstr(line, end);
+            int endPosition = result - line;
+
+            int length = endPosition - startPosition - strlen(start);
+            int offset = startPosition + strlen(start);
+
+            strncpy(dest, line + offset, length);
+
+            dest[length] = '\0';
+        }
+    }
+
     String readFile()
     {
         File file = SPIFFS.open(xmlFileName, "r");
