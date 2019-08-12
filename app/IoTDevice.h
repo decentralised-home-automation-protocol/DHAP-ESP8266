@@ -148,7 +148,7 @@ public:
     void discoveryHeaderRequest()
     {
         Serial.println("Discovery Header Request Recieved.");
-        networkManager.sendReplyPacket("330|" + header);
+        networkManager.sendReplyPacket("330|" + networkManager.getMacAddress() + "," + header);
     }
 
     void getIoTCommand(char *iotCommand)
