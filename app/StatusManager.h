@@ -21,8 +21,8 @@ public:
     {
         deviceStatus = &devStatus;
         macAddress = mac;
-        endLeaseResponse = "530|" + macAddress + "T,";
-        statusResponseHeader = "530|" + macAddress + "F,";
+        endLeaseResponse = "530|" + macAddress + ",T,";
+        statusResponseHeader = "530|" + macAddress + ",F,";
     }
 
     String getStatusUpdateIfNeeded()
