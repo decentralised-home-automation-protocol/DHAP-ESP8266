@@ -21,8 +21,8 @@ public:
     {
         deviceStatus = &devStatus;
         macAddress = mac;
-        endLeaseResponse = "530|" + macAddress;
-        statusResponseHeader = "540|" + macAddress + ",";
+        endLeaseResponse = "530|" + macAddress + "T,";
+        statusResponseHeader = "530|" + macAddress + "F,";
     }
 
     String getStatusUpdateIfNeeded()
@@ -41,7 +41,7 @@ public:
                 //lease has expired.
                 numDevicesListening = 0;
                 leaseLengthRemaining = 0;
-                return endLeaseResponse;
+                return endLeaseResponse + deviceStatus->getStatus();
             }
             else
             {
