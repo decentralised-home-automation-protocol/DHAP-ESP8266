@@ -198,10 +198,18 @@ public:
         previousMillis = currentMillis;
         timeSinceLastUpdate += deltaMillis;
 
-        if (timeSinceLastUpdate > 120000)
+        if (timeSinceLastUpdate > 240000)
         {
             timeSinceLastUpdate = 0;
-            Serial.println("Attempting to join again");
+
+            if (SSID == NULL || password == NULL)
+            {
+                return;
+            }
+            Serial.println("Attempting to join network again");
+            Serial.printf("SSID: %s\n", SSID);
+            Serial.printf("Password: %s\n", password);
+
             joinNetwork(SSID, password, false);
         }
     }
