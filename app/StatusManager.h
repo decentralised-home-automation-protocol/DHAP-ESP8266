@@ -114,9 +114,10 @@ public:
     void removeListeningDevice()
     {
         numDevicesListening--;
-        if (numDevicesListening == 0)
+        if (numDevicesListening == 0 || numDevicesListening < 0)
         {
             leaseLengthRemaining = 0;
+            numDevicesListening = 0;
         }
     }
 };
