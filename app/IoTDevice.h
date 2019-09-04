@@ -133,11 +133,24 @@ public:
         }
     }
 
+//    void uiRequest()
+//    {
+//        Serial.println("UI Request Recieved.");
+//        String response;
+//        fileManager.readFile(&response);
+//        networkManager.sendReplyPacket("210|" + response);
+//        Serial.println("XML File sent.");
+//    }
+
     void uiRequest()
     {
         Serial.println("UI Request Recieved.");
-        String response = fileManager.readFile();
-        networkManager.sendReplyPacket("210|" + response);
+        char file[4087];
+        strcat(file, "210|");
+        fileManager.readFile(file);
+        file[sizeof(file)] = '\0';
+
+        networkManager.sendReplyPacket(file);
         Serial.println("XML File sent.");
     }
 
@@ -149,8 +162,10 @@ public:
 
     void discoveryHeaderRequest()
     {
-        Serial.println("Discovery Header Request Recieved.");
-        networkManager.sendReplyPacket("330|" + networkManager.getMacAddress() + "," + header);
+        Serial.println("Discovery Header Request Recieved.");  
+        char response[22+header.length()];
+        sprintf(response, "330|%s,%s", networkManager.getMacAddress(), header.c_str());
+        networkManager.sendReplyPacket(response);
     }
 
     void getIoTCommand(char *iotCommand)

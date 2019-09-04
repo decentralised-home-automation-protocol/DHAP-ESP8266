@@ -69,18 +69,26 @@ public:
         }
     }
 
-    String readFile()
+//    void readFile(String *response)
+//    {
+//        File file = SPIFFS.open(xmlFileName, "r");
+//
+//        while (file.position() < file.size())
+//        {
+//            *response += file.readString();
+//        }
+//        file.close();
+//    }
+
+    void readFile(char *response)
     {
         File file = SPIFFS.open(xmlFileName, "r");
-        String response;
 
         while (file.position() < file.size())
         {
-            response += file.readString();
+            strcat(response, file.readString().c_str());
         }
         file.close();
-
-        return response;
     }
 
     String getSavedNetworkCredentials()

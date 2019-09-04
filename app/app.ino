@@ -11,16 +11,15 @@ public:
 
     boolean buttons = true;
 
-    String getStatus()
+    char* getStatus()
     {
         char str[80];
         if(buttons){
-          sprintf(str, "1-1=true,2-1=open,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated1,9-1=%d,11-1=1!12:30,12-1=password", stepper, rangeInput, selection, statusValue,progress);
-//          sprintf(str, "1-1=true,2-1=open,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated1,9-1=%d,11-1=1!12:30,12-1=password", stepper, rangeInput, selection, statusValue, progress);
+//          sprintf(str, "1-1=true,2-1=true,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=1!12:30", stepper, rangeInput, selection, statusValue,progress,progress);
+          sprintf(str, "1-1=true,2-1=true,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=1!12:30,12-1=passw", stepper, rangeInput, selection, statusValue,progress,progress);
         }else{
-          sprintf(str, "1-1=true,2-1=open,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated1,9-1=%d,11-1=1!12:30,12-1=password", stepper, rangeInput, selection, statusValue,progress);
-
-//          sprintf(str, "1-1=false,2-1=close,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated2,9-1=%d,11-1=1!11:40,12-1=password2", stepper, rangeInput, selection, statusValue, progress);
+//          sprintf(str, "1-1=false,2-1=false,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=2!11:50", stepper, rangeInput, selection, statusValue,progress,progress);
+          sprintf(str, "1-1=false,2-1=false,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=2!11:50,12-1=passw", stepper, rangeInput, selection, statusValue,progress,progress);
         }
         buttons = !buttons;
         stepper++;

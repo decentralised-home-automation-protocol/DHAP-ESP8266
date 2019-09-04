@@ -65,22 +65,34 @@ public:
         hasJoinedNetwork = false;
     }
 
-    String getLocalIP()
+    const char* getLocalIP()
     {
-        return WiFi.localIP().toString();
+        return WiFi.localIP().toString().c_str();
     }
 
-    String getMacAddress()
+    const char* getMacAddress()
     {
-        return WiFi.macAddress();
+        return WiFi.macAddress().c_str();
     }
+//
+//    void sendReplyPacket(String response)
+//    {
+//        Serial.printf("Sending packet to...");
+//        Serial.println(Udp.remoteIP());
+//
+//        Udp.beginPacket(Udp.remoteIP(), localUdpPort);
+//        Udp.write(response.c_str());
+//        Udp.endPacket();
+//        delay(200);
+//    }
 
-    void sendReplyPacket(String response)
+    void sendReplyPacket(const char *response)
     {
         Serial.printf("Sending packet to...");
         Serial.println(Udp.remoteIP());
+
         Udp.beginPacket(Udp.remoteIP(), localUdpPort);
-        Udp.write(response.c_str());
+        Udp.write(response);
         Udp.endPacket();
         delay(200);
     }
@@ -133,9 +145,10 @@ public:
 
     void broadcastStatus(String status)
     {
-        Serial.println(ESP.getFreeHeap());
-        Serial.printf("Broadcasting...\n");
-        
+        Serial.println("Broadcasting...");
+        Serial.println(broadcast);
+        Serial.println(localUdpPort);
+
         if (Udp.beginPacket(broadcast, localUdpPort)) {
           Udp.write(status.c_str());
           Udp.endPacket();

@@ -5,9 +5,9 @@ class StatusManager
 {
 private:
     Status *deviceStatus;
-    String macAddress;
-    String endLeaseResponse;
-    String statusResponseHeader;
+    const char* macAddress;
+    char endLeaseResponse[25];
+    char statusResponseHeader[25];
 
     int numDevicesListening = 0;
     int currentUpdatePeriod = 0;
@@ -17,15 +17,15 @@ private:
     unsigned long timeSinceLastUpdate = 0;
 
 public:
-    void setStatusController(Status &devStatus, String mac)
+    void setStatusController(Status &devStatus, const char* mac)
     {
         deviceStatus = &devStatus;
         macAddress = mac;
-        endLeaseResponse = "530|" + macAddress + ",T,";
-        statusResponseHeader = "530|" + macAddress + ",F,";
+        sprintf(endLeaseResponse, "530|%s,T,",mac);
+        sprintf(statusResponseHeader, "530|%s,F,",mac);
     }
 
-    String getStatusUpdateIfNeeded()
+    char* getStatusUpdateIfNeeded()
     {
         //check if someone is listening with a valid lease.
         if (numDevicesListening > 0)
@@ -41,7 +41,7 @@ public:
                 //lease has expired.
                 numDevicesListening = 0;
                 leaseLengthRemaining = 0;
-                return endLeaseResponse + deviceStatus->getStatus();
+                return strcat(endLeaseResponse, deviceStatus->getStatus());
             }
             else
             {
@@ -52,7 +52,7 @@ public:
             {
                 //send the status update.
                 timeSinceLastUpdate = 0;
-                return statusResponseHeader + deviceStatus->getStatus();
+                return strcat(statusResponseHeader, deviceStatus->getStatus());
             }
         }
         return "";
@@ -101,7 +101,7 @@ public:
         {
             char reply[45];
 
-            sprintf(reply, "510|%s,%lu,%d", macAddress.c_str(), allocatedLeasePeriod, allocatedUpdatePeriod);
+            sprintf(reply, "510|%s,%lu,%d", macAddress, allocatedLeasePeriod, allocatedUpdatePeriod);
 
             return reply;
         }
