@@ -3,7 +3,7 @@
 class Status
 {
 public:
-    virtual char* getStatus()
+    virtual String getStatus()
     {
         return "No status information defined.";
     }

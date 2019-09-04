@@ -80,17 +80,6 @@ public:
         file.close();
     }
 
-//    void readFile(char *response)
-//    {
-//        File file = SPIFFS.open(xmlFileName, "r");
-//
-//        while (file.position() < file.size())
-//        {
-//            strcat(response, file.readString().c_str());
-//        }
-//        file.close();
-//    }
-
     String getSavedNetworkCredentials()
     {
         Serial.println("Getting network credentials from file");
