@@ -4,6 +4,7 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "iosfwd": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "sstream": "cpp"
     }
 }

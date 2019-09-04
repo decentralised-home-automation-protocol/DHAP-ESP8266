@@ -8,13 +8,11 @@ private:
     NetworkManager networkManager;
     FileManager fileManager;
     StatusManager statusManager;
-    String header;
 
     char *ssid;
     char *password;
     char temp[255];
-
-    char *discoveryHeader;
+    char header[64];
 
     const int PACKET_TYPE_HEADER_LENGTH = 4;
 
@@ -22,6 +20,7 @@ public:
     void setup(bool forceSetupAP, Status &deviceStatus)
     {
         fileManager.mountFileSystem();
+        networkManager.initialise();
 
         if (forceSetupAP)
         {
@@ -29,17 +28,16 @@ public:
         }
         else
         {
-            String credentials = fileManager.getSavedNetworkCredentials();
+            char creds[64];
+            fileManager.getSavedNetworkCredentials(creds);
 
-            if (credentials.length() == 0)
+            if (strlen(creds) == 0)
             {
                 Serial.println("No credentials found!");
                 networkManager.setupAccessPoint();
             }
             else
             {
-                char *creds = new char[credentials.length()];
-                strcpy(creds, credentials.c_str());
                 ssid = strtok(creds, "|,");
                 password = strtok(NULL, "|,");
 
@@ -50,18 +48,18 @@ public:
                 }
             }
         }
-        header = fileManager.getFileHeader();
-        Serial.println("File header: " + header);
+        fileManager.getFileHeader(header);
+        Serial.printf("File header: %s", header);
 
-        statusManager.setStatusController(deviceStatus, networkManager.getMacAddress());
+        statusManager.setStatusController(deviceStatus, networkManager.macAddress);
     }
 
     bool commandRecieved(char *iotCommand)
     {
-        String status = statusManager.getStatusUpdateIfNeeded();
-        if (status.length() > 0)
+        boolean newStatus = statusManager.getStatusUpdateIfNeeded(temp);
+        if (newStatus)
         {
-            networkManager.broadcastStatus(status);
+            networkManager.broadcastStatus(temp);
         }
 
         if (networkManager.newCommandRecieved())
@@ -70,7 +68,7 @@ public:
         }
 
         if (!networkManager.hasJoinedNetwork)
-        {            
+        {
             networkManager.joinWiFiLoop(ssid, password);
         }
         return false;
@@ -112,6 +110,8 @@ public:
         if (!networkManager.hasJoinedNetwork)
         {
             networkManager.sendReplyPacket("110");
+            networkManager.sendReplyPacket("110");
+            networkManager.sendReplyPacket("110");
 
             //Tokenize Credentials
             networkManager.getRecentPacket(temp);
@@ -134,8 +134,10 @@ public:
     void uiRequest()
     {
         Serial.println("UI Request Recieved.");
-        String response = fileManager.readFile();
-        networkManager.sendReplyPacket("210|" + response);
+        String xml = "210|";
+
+        fileManager.readFile(&xml);
+        networkManager.sendReplyPacket(xml.c_str());
         Serial.println("XML File sent.");
     }
 
@@ -148,7 +150,9 @@ public:
     void discoveryHeaderRequest()
     {
         Serial.println("Discovery Header Request Recieved.");
-        networkManager.sendReplyPacket("330|" + networkManager.getMacAddress() + "," + header);
+        char response[86];
+        sprintf(response, "330|%s,%s", networkManager.macAddress, header);
+        networkManager.sendReplyPacket(response);
     }
 
     void getIoTCommand(char *iotCommand)
@@ -161,10 +165,10 @@ public:
     void statusLeaseRequest()
     {
         Serial.println("Status Request Recieved. Adding to List...");
-        String response = statusManager.newStatusRegistration(networkManager.incomingPacket);
-        if (response.length() > 0)
+        boolean responseRequired = statusManager.newStatusRegistration(networkManager.incomingPacket, temp);
+        if (responseRequired)
         {
-            networkManager.sendReplyPacket(response.c_str());
+            networkManager.sendReplyPacket(temp);
         }
     }
 };

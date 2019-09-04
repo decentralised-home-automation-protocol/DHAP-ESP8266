@@ -5,7 +5,7 @@ class Status
 public:
     virtual String getStatus()
     {
-        return "No status information defined.";
+        return "No status information defined.";        
     }
 
     virtual int getMaxLeaseLength()

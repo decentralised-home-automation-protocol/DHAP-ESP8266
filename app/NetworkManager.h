@@ -3,7 +3,7 @@
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress subnet(255, 255, 0, 0);
 IPAddress broadcast(255, 255, 255, 255);
 
 class NetworkManager
@@ -23,20 +23,26 @@ private:
 
 public:
     char incomingPacket[255]; // buffer for incoming packets
+    char macAddress[18];
     bool hasJoinedNetwork = false;
+
+    void initialise()
+    {
+        strcpy(macAddress, WiFi.macAddress().c_str());
+        randomSeed(macAddress[6]);
+    }
 
     bool newCommandRecieved()
     {
         int packetSize = Udp.parsePacket();
         if (packetSize)
         {
-            Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
             int len = Udp.read(incomingPacket, 255);
             if (len > 0)
             {
                 incomingPacket[len] = 0;
             }
-            Serial.printf("UDP packet contents: %s\n", incomingPacket);
+            Serial.printf("\nUDP packet contents: %s\n", incomingPacket);
             return true;
         }
         return false;
@@ -65,24 +71,14 @@ public:
         hasJoinedNetwork = false;
     }
 
-    String getLocalIP()
-    {
-        return WiFi.localIP().toString();
-    }
-
-    String getMacAddress()
-    {
-        return WiFi.macAddress();
-    }
-
-    void sendReplyPacket(String response)
+    void sendReplyPacket(const char *response)
     {
         Serial.printf("Sending packet to...");
         Serial.println(Udp.remoteIP());
+
         Udp.beginPacket(Udp.remoteIP(), localUdpPort);
-        Udp.write(response.c_str());
+        Udp.write(response);
         Udp.endPacket();
-        delay(200);
     }
 
     bool joinNetwork(char *SSID, char *password, bool sendReply)
@@ -106,13 +102,18 @@ public:
                 return false;
             }
 
-            if(checkForNewJoiningPacket()){
+            if (checkForNewJoiningPacket())
+            {
                 return true;
             }
         }
 
         if (sendReply)
         {
+            sendReplyPacket("120");
+            delay(1000);
+            sendReplyPacket("120");
+            delay(1000);
             sendReplyPacket("120");
         }
 
@@ -127,14 +128,20 @@ public:
         return hasJoinedNetwork;
     }
 
-    void broadcastStatus(String status)
+    void broadcastStatus(const char *response)
     {
-        Serial.printf("Broadcasting: ");
-        Serial.println(status);
-        Udp.beginPacket(broadcast, localUdpPort);
-        Udp.write(status.c_str());
-        Udp.endPacket();
-        delay(200);
+        Serial.printf("Broadcasting: %s\n", response);
+
+        if (Udp.beginPacket(broadcast, localUdpPort))
+        {
+            Udp.write(response);
+            Udp.endPacket();
+            delay(200);
+        }
+        else
+        {
+            Serial.println("Error resolving hostname or port");
+        }
     }
 
     void discovery()
@@ -154,9 +161,9 @@ public:
                 char *statusBit = strtok_r(NULL, ",", &end_token);
                 char *visibilityBit = strtok_r(NULL, ",", &end_token);
 
-                Serial.printf("%s <=> %s\n", MACAddress, WiFi.macAddress().c_str());
+                Serial.printf("%s <=> %s\n", MACAddress, macAddress);
 
-                if (strcmp(MACAddress, WiFi.macAddress().c_str()) == 0)
+                if (strcmp(MACAddress, macAddress) == 0)
                 {
                     // this device is on the list
                     Serial.println("This device is on the census list");
@@ -173,11 +180,10 @@ public:
             Serial.print("Census list is empty\n");
         }
 
-        sprintf(reply, "310|%s,%d,%d", WiFi.macAddress().c_str(), 0, 0);
+        sprintf(reply, "310|%s,%d,%d", macAddress, 0, 0);
         Serial.print("Reply packet: ");
         Serial.println(reply);
 
-        randomSeed(WiFi.macAddress()[5]);
         delay(random(0, 200));
         sendReplyPacket(reply);
     }
@@ -214,7 +220,8 @@ public:
         }
     }
 
-    bool checkForNewJoiningPacket(){
+    bool checkForNewJoiningPacket()
+    {
         if (newCommandRecieved())
         {
             if (getRecentPacketType() == 100)

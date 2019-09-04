@@ -3,15 +3,20 @@
 class FileManager
 {
 private:
-    char *xmlFileName = "/TV.xml";
+    char *xmlFileName = "/layout.xml";
     char *networkCredentialsFileName = "/credentials.txt";
 
 public:
+    int layoutFileSize;
+
     void mountFileSystem()
     {
         if (SPIFFS.begin())
         {
             Serial.println("mount success");
+            File file = SPIFFS.open(xmlFileName, "r");
+            layoutFileSize = file.size();
+            file.close();
         }
         else
         {
@@ -19,12 +24,11 @@ public:
         }
     }
 
-    String getFileHeader()
+    void getFileHeader(char* header)
     {
         File file = SPIFFS.open(xmlFileName, "r");
         char name[30];
         char room[30];
-        char header[60];
 
         Serial.println("Getting file header");
 
@@ -46,11 +50,9 @@ public:
         file.close();
 
         sprintf(header, "%s,%s", name, room);
-
-        return header;
     }
 
-    void findString(const char *line, char *start, char *end, char* dest)
+    void findString(const char *line, char *start, char *end, char *dest)
     {
         char *result = strstr(line, start);
         if (result != NULL)
@@ -69,41 +71,40 @@ public:
         }
     }
 
-    String readFile()
+    void readFile(String *response)
     {
         File file = SPIFFS.open(xmlFileName, "r");
-        String response;
 
         while (file.position() < file.size())
         {
-            response += file.readString();
+            *response += file.readString();
         }
-        file.close();
 
-        return response;
+        file.close();
     }
 
-    String getSavedNetworkCredentials()
+    void getSavedNetworkCredentials(char * creds)
     {
         Serial.println("Getting network credentials from file");
         File file = SPIFFS.open(networkCredentialsFileName, "r");
-        String credentials;
+        sprintf(creds, "");
 
         while (file.position() < file.size())
         {
-            credentials += file.readString();
+            strcat(creds, file.readString().c_str());
         }
         file.close();
-        return credentials;
     }
 
-    void saveNetworkCredentials(String SSID, String password)
+    void saveNetworkCredentials(char *SSID, char *password)
     {
         Serial.println("Saving network credentials to file");
 
+        char credentials[64];
+        sprintf(credentials, "%s,%s", SSID, password);
+
         File file = SPIFFS.open(networkCredentialsFileName, "w");
-        String credentials = SSID + "," + password;
-        file.write(credentials.c_str());
+        file.write(credentials, 64);
         file.close();
     }
 };
