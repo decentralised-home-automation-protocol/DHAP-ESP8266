@@ -58,8 +58,9 @@ public:
 
     bool commandRecieved(char *iotCommand)
     {
-        String status = statusManager.getStatusUpdateIfNeeded();
-        if (status.length() > 0)
+        char status[150];
+        boolean newStatus = statusManager.getStatusUpdateIfNeeded(status);
+        if (newStatus)
         {
             networkManager.broadcastStatus(status);
         }
@@ -133,26 +134,28 @@ public:
         }
     }
 
-//    void uiRequest()
-//    {
-//        Serial.println("UI Request Recieved.");
-//        String response;
-//        fileManager.readFile(&response);
-//        networkManager.sendReplyPacket("210|" + response);
-//        Serial.println("XML File sent.");
-//    }
-
     void uiRequest()
     {
         Serial.println("UI Request Recieved.");
-        char file[4087];
-        strcat(file, "210|");
-        fileManager.readFile(file);
-        file[sizeof(file)] = '\0';
-
-        networkManager.sendReplyPacket(file);
+        String response = "210|";
+        fileManager.readFile(&response);
+        networkManager.sendReplyPacket(response.c_str());
         Serial.println("XML File sent.");
     }
+
+//    void uiRequest()
+//    {
+//        Serial.println("UI Request Recieved.");
+//        char file[4087];
+//        strcat(file, "210|");
+//        fileManager.readFile(file);
+//        file[sizeof(file)] = '\0';
+//
+//        String f = file;
+//
+//        networkManager.sendReplyPacket(f);
+//        Serial.println("XML File sent.");
+//    }
 
     void discoveryRequest()
     {

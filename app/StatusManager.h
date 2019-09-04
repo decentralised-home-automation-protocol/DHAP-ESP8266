@@ -25,7 +25,7 @@ public:
         sprintf(statusResponseHeader, "530|%s,F,",mac);
     }
 
-    char* getStatusUpdateIfNeeded()
+    boolean getStatusUpdateIfNeeded(char status[150])
     {
         //check if someone is listening with a valid lease.
         if (numDevicesListening > 0)
@@ -41,7 +41,8 @@ public:
                 //lease has expired.
                 numDevicesListening = 0;
                 leaseLengthRemaining = 0;
-                return strcat(endLeaseResponse, deviceStatus->getStatus());
+                sprintf(status, "%s%s",endLeaseResponse, deviceStatus->getStatus());
+                return true;
             }
             else
             {
@@ -52,10 +53,11 @@ public:
             {
                 //send the status update.
                 timeSinceLastUpdate = 0;
-                return strcat(statusResponseHeader, deviceStatus->getStatus());
+                sprintf(status, "%s%s",statusResponseHeader, deviceStatus->getStatus());
+                return true;
             }
         }
-        return "";
+        return false;
     }
 
     void addNewListeningDevice(unsigned long leasePeriod, int updatePeriod)

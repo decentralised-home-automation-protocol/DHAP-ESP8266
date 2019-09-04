@@ -94,7 +94,6 @@ public:
         Udp.beginPacket(Udp.remoteIP(), localUdpPort);
         Udp.write(response);
         Udp.endPacket();
-        delay(200);
     }
 
     bool joinNetwork(char *SSID, char *password, bool sendReply)
@@ -143,14 +142,12 @@ public:
         return hasJoinedNetwork;
     }
 
-    void broadcastStatus(String status)
+    void broadcastStatus(const char *response)
     {
         Serial.println("Broadcasting...");
-        Serial.println(broadcast);
-        Serial.println(localUdpPort);
 
         if (Udp.beginPacket(broadcast, localUdpPort)) {
-          Udp.write(status.c_str());
+          Udp.write(response);
           Udp.endPacket();
           delay(200);
         } else {

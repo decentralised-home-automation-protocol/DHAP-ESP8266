@@ -69,27 +69,27 @@ public:
         }
     }
 
-//    void readFile(String *response)
-//    {
-//        File file = SPIFFS.open(xmlFileName, "r");
-//
-//        while (file.position() < file.size())
-//        {
-//            *response += file.readString();
-//        }
-//        file.close();
-//    }
-
-    void readFile(char *response)
+    void readFile(String *response)
     {
         File file = SPIFFS.open(xmlFileName, "r");
 
         while (file.position() < file.size())
         {
-            strcat(response, file.readString().c_str());
+            *response += file.readString();
         }
         file.close();
     }
+
+//    void readFile(char *response)
+//    {
+//        File file = SPIFFS.open(xmlFileName, "r");
+//
+//        while (file.position() < file.size())
+//        {
+//            strcat(response, file.readString().c_str());
+//        }
+//        file.close();
+//    }
 
     String getSavedNetworkCredentials()
     {
