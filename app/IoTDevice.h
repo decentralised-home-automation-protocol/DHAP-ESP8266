@@ -112,6 +112,8 @@ public:
         if (!networkManager.hasJoinedNetwork)
         {
             networkManager.sendReplyPacket("110");
+            networkManager.sendReplyPacket("110");
+            networkManager.sendReplyPacket("110");
 
             //Tokenize Credentials
             networkManager.getRecentPacket(temp);

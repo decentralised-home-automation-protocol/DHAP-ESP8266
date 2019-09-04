@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<device>
+    <group id="0" permission="RR">
+        <name>Element Samples</name>
+        <room>Outside</room>
+    </group>
+
+    <!--SwitchToggle-->
+    <group id="1" permisison="WR">
+        <gui_element id="1">
+            <type>switchtoggle</type>
+            <disp_settings>On/Off</disp_settings>
+            <status_location>1</status_location>
+            <comment>Light Switch</comment>
+        </gui_element>
+    </group>
+
+    <!--ButtonToggle-->
+    <group id="2" permisison="WR">
+        <gui_element id="1">
+            <type>buttontoggle</type>
+            <disp_settings>Open/Close,Open,Close</disp_settings>
+            <status_location>1</status_location>
+            <comment>Light Switch</comment>
+        </gui_element>
+    </group>
+
+    <!--Stepper-->
+    <group id="3" permisison="WR">
+        <gui_element id="1">
+            <type>stepper</type>
+            <disp_settings>Number,0,10</disp_settings>
+            <status_location>1</status_location>
+            <comment>Number Counter</comment>
+        </gui_element>
+    </group>
+
+    <!--RangeInput-->
+    <group id="4" permisison="WR">
+        <gui_element id="1">
+            <type>rangeinput</type>
+            <disp_settings>Volume,Set,1000,3000</disp_settings>
+            <status_location>1</status_location>
+            <comment>Volume Slider</comment>
+        </gui_element>
+    </group>
+
+    <!--DirectionalButtons-->
+    <group id="5" permisison="WR">
+        <gui_element id="1">
+            <type>directionalbuttons</type>
+            <disp_settings>Direction,N,E,S,W</disp_settings>
+            <status_location>1</status_location>
+            <comment>Directional movement</comment>
+        </gui_element>
+    </group>
+
+    <!--Selection-->
+    <group id="6" permisison="WR">
+        <gui_element id="1">
+            <type>selection</type>
+            <disp_settings>Move Door,one,two,three,four,five,six</disp_settings>
+            <status_location>1</status_location>
+            <comment>Door positions</comment>
+        </gui_element>
+    </group>
+
+    <!--Status-->
+    <group id="7" permisison="WR">
+        <gui_element id="1">
+            <type>status</type>
+            <disp_settings>Voltage</disp_settings>
+            <status_location>1</status_location>
+            <comment>Voltage level</comment>
+        </gui_element>
+    </group>
+
+    <!--TextInput-->
+    <group id="8" permisison="WR">
+        <gui_element id="1">
+            <type>textinput</type>
+            <disp_settings>Name,Submit</disp_settings>
+            <status_location>1</status_location>
+            <comment>Name</comment>
+        </gui_element>
+    </group>
+
+    <!--Progress-->
+    <group id="9" permission="WR">
+        <gui_element id="1">
+            <type>progress</type>
+            <disp_settings>Loading...</disp_settings>
+            <status_location>1</status_location>
+            <comment>Loading progression</comment>
+        </gui_element>
+    </group>
+
+    <!--ButtonGroup-->
+    <group id="10" permisison="WR">
+        <gui_element id="1">
+            <type>buttongroup</type>
+            <disp_settings>Numpad,1,2,3,4</disp_settings>
+            <status_location>1</status_location>
+            <comment>Numpad</comment>
+        </gui_element>
+    </group>
+
+    <!--Scheduler-->
+    <group id="11" permisison="WR">
+        <gui_element id="1">
+            <type>scheduler</type>
+            <disp_settings>Schedule an event,Submit,Mon,Tue,Wed,Thu,Fri</disp_settings>
+            <status_location>1</status_location>
+            <comment>Event scheduler</comment>
+        </gui_element>
+    </group>
+
+    <!--Password-->
+    <group id="12" permisison="WR">
+        <gui_element id="1">
+            <type>password</type>
+            <disp_settings>Password,Submit</disp_settings>
+            <status_location>1</status_location>
+            <comment>Enter your password</comment>
+        </gui_element>
+    </group>
+</device>

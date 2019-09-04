@@ -3,7 +3,7 @@
 
 IPAddress local_IP(192, 168, 4, 22);
 IPAddress gateway(192, 168, 4, 9);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress subnet(255, 255, 0, 0);
 IPAddress broadcast(255, 255, 255, 255);
 
 class NetworkManager
@@ -114,6 +114,10 @@ public:
         if (sendReply)
         {
             sendReplyPacket("120");
+            delay(1000);
+            sendReplyPacket("120");
+            delay(1000);
+            sendReplyPacket("120");
         }
 
         WiFi.mode(WIFI_STA);
@@ -129,12 +133,16 @@ public:
 
     void broadcastStatus(String status)
     {
-        Serial.printf("Broadcasting: ");
-        Serial.println(status);
-        Udp.beginPacket(broadcast, localUdpPort);
-        Udp.write(status.c_str());
-        Udp.endPacket();
-        delay(200);
+        Serial.println(ESP.getFreeHeap());
+        Serial.printf("Broadcasting...\n");
+        
+        if (Udp.beginPacket(broadcast, localUdpPort)) {
+          Udp.write(status.c_str());
+          Udp.endPacket();
+          delay(200);
+        } else {
+          Serial.println("Error resolving hostname or port");
+        }
     }
 
     void discovery()
