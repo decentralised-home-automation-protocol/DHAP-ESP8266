@@ -71,14 +71,11 @@ public:
         }
     }
 
-    void readFile(String *response)
+    void readFile(char *response)
     {
         File file = SPIFFS.open(xmlFileName, "r");
 
-        while (file.position() < file.size())
-        {
-            *response += file.readString();
-        }
+        file.readBytes(response, layoutFileSize);
 
         file.close();
     }
