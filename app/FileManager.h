@@ -37,19 +37,18 @@ public:
         char *roomStart = "<room>";
         char *roomEnd = "</room>";
 
-        while (file.position() < file.size())
-        {
-            String lineString = file.readString();
-            const char *line = lineString.c_str();
+        char *xml = (char *)malloc(layoutFileSize);
 
-            findString(line, nameStart, nameEnd, name);
+        file.readBytes(xml, layoutFileSize);
 
-            findString(line, roomStart, roomEnd, room);
-        }
+        findString(xml, nameStart, nameEnd, name);
+
+        findString(xml, roomStart, roomEnd, room);
 
         file.close();
 
         sprintf(header, "%s,%s", name, room);
+        free(xml);
     }
 
     void findString(const char *line, char *start, char *end, char *dest)
@@ -84,12 +83,9 @@ public:
     {
         Serial.println("Getting network credentials from file");
         File file = SPIFFS.open(networkCredentialsFileName, "r");
-        sprintf(creds, "");
 
-        while (file.position() < file.size())
-        {
-            strcat(creds, file.readString().c_str());
-        }
+        file.readBytes(creds, layoutFileSize);
+
         file.close();
     }
 
