@@ -16,11 +16,11 @@ public:
     char status[120];
     if (buttons)
     {
-      sprintf(status, "1-1=true,2-1=true,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=1!12:30,12-1=password", stepper, rangeInput, selection, statusValue, progress, progress);
+      sprintf(status, "true,true,%d,%d,%d,%d,updated%d,%d,1!12:30,password", stepper, rangeInput, selection, statusValue, progress, progress);
     }
     else
     {
-      sprintf(status, "1-1=false,2-1=false,3-1=%d,4-1=%d,6-1=%d,7-1=%d,8-1=updated%d,9-1=%d,11-1=2!11:50,12-1=password1", stepper, rangeInput, selection, statusValue, progress, progress);
+      sprintf(status, "false,false,%d,%d,%d,%d,updated%d,%d,2!11:50,password1", stepper, rangeInput, selection, statusValue, progress, progress);
     }
     buttons = !buttons;
     stepper++;
