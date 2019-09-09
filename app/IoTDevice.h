@@ -134,13 +134,16 @@ public:
     void uiRequest()
     {
         Serial.println("UI Request Recieved.");
-
-        char *xml = (char *)malloc(fileManager.layoutFileSize + PACKET_TYPE_HEADER_LENGTH);
+        int size = fileManager.layoutFileSize + PACKET_TYPE_HEADER_LENGTH;
+        char *xml = (char *)malloc(size);
         sprintf(xml, "210|");
+
         fileManager.readFile(xml + PACKET_TYPE_HEADER_LENGTH);
 
+        //Ensures there isnt any junk after the xml.
+        xml[size] = '\0';
+
         networkManager.sendReplyPacket(xml);
-        Serial.println("XML File sent.");
 
         free(xml);
     }
