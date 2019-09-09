@@ -39,13 +39,21 @@ public:
     return status;
   }
 
-  virtual int getMaxLeaseLength()
+  void executeCommand(char* command)
+  {
+    String id = getCommandId(command);
+    String data = getCommandData(command);
+
+    Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
+  }
+
+  int getMaxLeaseLength()
   {
     //20 minutes maximum lease length.
     return 200000;
   }
 
-  virtual int getMinUpdatePeriod()
+  int getMinUpdatePeriod()
   {
     //250ms minimum update period.
     return 250;
@@ -70,6 +78,6 @@ void loop()
 {
   if (ioTDevice.commandRecieved(iotCommand))
   {
-    Serial.printf("IotCommand: %s\n", iotCommand);
+    deviceStatus->executeCommand(iotCommand);
   }
 }
