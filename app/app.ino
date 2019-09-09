@@ -3,48 +3,48 @@
 class DeviceStatus : public Status
 {
 public:
-  int stepper = 0;
-  int rangeInput = 1000;
-  int selection = 0;
-  int statusValue = 0;
-  int progress = 0;
+  bool on = true;
+  bool warm = true;
+  int temp = 0;
+  int setting = 0;
+
+  char *trueString = "true";
+  char *falseString = "false";
 
   boolean buttons = true;
 
   String getStatus()
   {
     char status[120];
-    if (buttons)
-    {
-      sprintf(status, "true,true,%d,%d,%d,%d,updated%d,%d,1!12:30,password", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    else
-    {
-      sprintf(status, "false,false,%d,%d,%d,%d,updated%d,%d,2!11:50,password1", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    buttons = !buttons;
-    stepper++;
-    rangeInput++;
-    selection++;
-    if (selection > 5)
-    {
-      selection = 0;
-    }
-    statusValue++;
-    progress++;
-    if (progress > 100)
-    {
-      progress = 0;
-    }
+
+    sprintf(status, "%s,%s,%d,%d", on ? trueString : falseString, warm ? trueString : falseString, temp, setting);
+
     return status;
   }
 
-  void executeCommand(char* command)
+  void executeCommand(char *command)
   {
     String id = getCommandId(command);
     String data = getCommandData(command);
 
     Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
+
+    if (!strcmp(id.c_str(), "1-1"))
+    {
+      on = !on;
+    }
+    else if (!strcmp(id.c_str(), "3-1"))
+    {
+      warm = !warm;
+    }
+    else if (!strcmp(id.c_str(), "4-1"))
+    {
+      temp = atoi(data.c_str());
+    }
+    else if (!strcmp(id.c_str(), "5-1"))
+    {
+      setting = atoi(data.c_str());
+    }
   }
 
   int getMaxLeaseLength()
