@@ -3,48 +3,60 @@
 class DeviceStatus : public Status
 {
 public:
-  int stepper = 0;
-  int rangeInput = 1000;
-  int selection = 0;
-  int statusValue = 0;
-  int progress = 0;
+  bool online = true;
+  int currentTemp = 15;
+  int targetTemp = 23;
+  int fanSpeed = 5;
+  int mode = 2;
+  char time[9] = "10:00 AM";
+
+  char *trueString = "true";
+  char *falseString = "false";
 
   boolean buttons = true;
 
   String getStatus()
   {
     char status[120];
-    if (buttons)
-    {
-      sprintf(status, "true,true,%d,%d,%d,%d,updated%d,%d,1!12:30,password", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    else
-    {
-      sprintf(status, "false,false,%d,%d,%d,%d,updated%d,%d,2!11:50,password1", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    buttons = !buttons;
-    stepper++;
-    rangeInput++;
-    selection++;
-    if (selection > 5)
-    {
-      selection = 0;
-    }
-    statusValue++;
-    progress++;
-    if (progress > 100)
-    {
-      progress = 0;
-    }
+
+    sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time);
+
     return status;
   }
 
-  void executeCommand(char* command)
+  void executeCommand(char *command)
   {
     String id = getCommandId(command);
     String data = getCommandData(command);
 
     Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
+
+    if (!strcmp(id.c_str(), "1-1"))
+    {
+      online = !online;
+    }
+    else if (!strcmp(id.c_str(), "2-2"))
+    {
+      targetTemp = atoi(data.c_str());
+    }
+    else if (!strcmp(id.c_str(), "3-1"))
+    {
+      fanSpeed = atoi(data.c_str());
+    }
+    else if (!strcmp(id.c_str(), "4-1"))
+    {
+      char schedulerData[12];
+      strcpy(schedulerData, data.c_str());
+      mode = atoi(strtok(schedulerData, "!"));
+
+      char *timeString = strtok(NULL, "!");
+      if (timeString == NULL)
+      {
+        return;
+      }
+
+      strcpy(time, timeString);
+    }
   }
 
   int getMaxLeaseLength()
