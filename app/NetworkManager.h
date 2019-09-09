@@ -42,7 +42,6 @@ public:
             {
                 incomingPacket[len] = 0;
             }
-            Serial.printf("\nUDP packet contents: %s\n", incomingPacket);
             return true;
         }
         return false;

@@ -100,7 +100,7 @@ public:
             statusManager.removeListeningDevice();
             return false;
         default:
-            Serial.println("Unknown Packet");
+            return false;
         };
         return false;
     }
