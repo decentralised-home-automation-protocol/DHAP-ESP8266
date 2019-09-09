@@ -3,39 +3,24 @@
 class DeviceStatus : public Status
 {
 public:
-  int stepper = 0;
-  int rangeInput = 1000;
-  int selection = 0;
-  int statusValue = 0;
-  int progress = 0;
+  bool online = true;
+  int source = 0;
+  bool recording = true;
+  bool muted = false;
+  int channel = 0;
+  int volume = 0;
+
+  char *trueString = "true";
+  char *falseString = "false";
 
   boolean buttons = true;
 
   String getStatus()
   {
     char status[120];
-    if (buttons)
-    {
-      sprintf(status, "true,true,%d,%d,%d,%d,updated%d,%d,1!12:30,password", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    else
-    {
-      sprintf(status, "false,false,%d,%d,%d,%d,updated%d,%d,2!11:50,password1", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    buttons = !buttons;
-    stepper++;
-    rangeInput++;
-    selection++;
-    if (selection > 5)
-    {
-      selection = 0;
-    }
-    statusValue++;
-    progress++;
-    if (progress > 100)
-    {
-      progress = 0;
-    }
+
+    sprintf(status, "%s,%d,%s,%s,%d,%d", online ? trueString : falseString, source, recording ? trueString : falseString, muted ? trueString : falseString, channel, volume);
+
     return status;
   }
 
@@ -45,6 +30,31 @@ public:
     String data = getCommandData(command);
 
     Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
+
+    if (!strcmp(id.c_str(), "1-1"))
+    {
+      online = !online;
+    }
+    else if (!strcmp(id.c_str(), "1-2"))
+    {
+      source = atoi(data.c_str());
+    }
+    else if (!strcmp(id.c_str(), "2-1"))
+    {
+      recording = !recording;
+    }
+    else if (!strcmp(id.c_str(), "2-2"))
+    {
+      muted = !muted;
+    }
+    else if (!strcmp(id.c_str(), "3-1"))
+    {
+      channel = atoi(data.c_str());
+    }
+    else if (!strcmp(id.c_str(), "4-1"))
+    {
+      volume = atoi(data.c_str());
+    }
   }
 
   int getMaxLeaseLength()
