@@ -34,8 +34,8 @@ public:
 
         char *nameStart = "<name>";
         char *nameEnd = "</name>";
-        char *roomStart = "<room>";
-        char *roomEnd = "</room>";
+        char *roomStart = "<location>";
+        char *roomEnd = "</location>";
 
         char *xml = (char *)malloc(layoutFileSize);
 
