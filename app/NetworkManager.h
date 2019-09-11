@@ -98,6 +98,7 @@ public:
             if (timeout == 0)
             {
                 previousMillis = millis();
+                broadcastStatus("130");
                 return false;
             }
 
