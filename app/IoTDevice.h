@@ -8,14 +8,14 @@ private:
     NetworkManager networkManager;
     FileManager fileManager;
     StatusManager statusManager;
+    const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     char *ssid;
     char *password;
     char temp[255];
-    char header[64];
-
-    const int PACKET_TYPE_HEADER_LENGTH = 4;
-
+    char name[32];
+    char location[32];
+    char headerVersion;
 public:
     void setup(bool forceSetupAP, Status &deviceStatus)
     {
@@ -48,10 +48,23 @@ public:
                 }
             }
         }
-        fileManager.getFileHeader(header);
-        Serial.printf("File header: %s", header);
+
+        getHeader();
 
         statusManager.setStatusController(deviceStatus, networkManager.macAddress);
+    }
+
+    void getHeader(){
+        char header[65];
+        fileManager.getFileHeader(header);
+
+        headerVersion = header[0];
+
+        strtok(header, ",");
+        strcpy(name, strtok(NULL, ","));
+        strcpy(location, strtok(NULL, ","));
+
+        networkManager.headerVersion = headerVersion;
     }
 
     bool commandReceived(char *iotCommand)
@@ -99,6 +112,14 @@ public:
             return false;
         case 520: //Leave Status Lease
             statusManager.removeListeningDevice();
+            return false;
+        case 600: //Change header name
+            changeHeaderName();
+            getHeader();
+            return false;
+        case 610: //Change header location
+            changeHeaderLocation();
+            getHeader();
             return false;
         default:
             return false;
@@ -159,7 +180,7 @@ public:
     {
         Serial.println("Discovery Header Request Received.");
         char response[86];
-        sprintf(response, "330|%s,%s", networkManager.macAddress, header);
+        sprintf(response, "330|%s,%c,%s,%s", networkManager.macAddress, headerVersion, name, location);
         networkManager.sendReplyPacket(response);
     }
 
@@ -178,5 +199,18 @@ public:
         {
             networkManager.sendReplyPacket(temp);
         }
+    }
+
+    void changeHeaderName(){
+        networkManager.getRecentPacket(temp);
+        strtok(temp, "|"); //type
+        fileManager.setFileHeader(headerVersion, strtok(NULL, "|"), location);
+    }
+
+    void changeHeaderLocation()
+    {
+        networkManager.getRecentPacket(temp);
+        strtok(temp, "|"); //type
+        fileManager.setFileHeader(headerVersion, name, strtok(NULL, "|"));
     }
 };

@@ -4,6 +4,7 @@ class FileManager
 {
 private:
     char *xmlFileName = "/layout.xml";
+    char *headerFileName = "/header.txt";
     char *networkCredentialsFileName = "/credentials.txt";
 
 public:
@@ -24,50 +25,42 @@ public:
         }
     }
 
-    void getFileHeader(char* header)
+    void getFileHeader(char *header)
     {
-        File file = SPIFFS.open(xmlFileName, "r");
-        char name[30];
-        char room[30];
-
+        File file = SPIFFS.open(headerFileName, "r");
         Serial.println("Getting file header");
-
-        char *nameStart = "<name>";
-        char *nameEnd = "</name>";
-        char *roomStart = "<location>";
-        char *roomEnd = "</location>";
-
-        char *xml = (char *)malloc(layoutFileSize);
-
-        file.readBytes(xml, layoutFileSize);
-
-        findString(xml, nameStart, nameEnd, name);
-
-        findString(xml, roomStart, roomEnd, room);
-
+        file.readBytes(header, file.size());
         file.close();
 
-        sprintf(header, "%s,%s", name, room);
-        free(xml);
+        if (strlen(header) < 1){
+            Serial.println("No header file found! Creating a header file...");
+            sprintf(header, "0,name not set,location not set");
+
+            File file2 = SPIFFS.open(headerFileName, "w");
+            file2.write(header, 64);
+            file2.close();
+        }
+        Serial.printf("File header: %s\n", header);
     }
 
-    void findString(const char *line, char *start, char *end, char *dest)
+    void setFileHeader(char currentHeaderVersion, char *name, char *location)
     {
-        char *result = strstr(line, start);
-        if (result != NULL)
+        Serial.println("Setting file header");
+
+        int currentVersionInt = currentHeaderVersion - 48;
+        currentVersionInt++;
+        if (currentVersionInt > 9)
         {
-            int startPosition = result - line;
-
-            result = strstr(line, end);
-            int endPosition = result - line;
-
-            int length = endPosition - startPosition - strlen(start);
-            int offset = startPosition + strlen(start);
-
-            strncpy(dest, line + offset, length);
-
-            dest[length] = '\0';
+            currentVersionInt = 0;
         }
+
+        //Write new header to file.
+        char header[64];
+        sprintf(header, "%d,%s,%s", currentVersionInt, name, location);
+
+        File file2 = SPIFFS.open(headerFileName, "w");
+        file2.write(header, 64);
+        file2.close();
     }
 
     void readFile(char *response)
@@ -79,7 +72,7 @@ public:
         file.close();
     }
 
-    void getSavedNetworkCredentials(char * creds)
+    void getSavedNetworkCredentials(char *creds)
     {
         Serial.println("Getting network credentials from file");
         File file = SPIFFS.open(networkCredentialsFileName, "r");
