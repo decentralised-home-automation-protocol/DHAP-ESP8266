@@ -92,6 +92,7 @@ public:
             return false;
         case 400: //IoT Command
             getIoTCommand(iotCommand);
+            statusManager.forceUpdateFlag = true;
             return true;
         case 500: //Status Lease Request
             statusLeaseRequest();
@@ -133,14 +134,14 @@ public:
 
     void uiRequest()
     {
-        Serial.println("UI Request Recieved.");
+        Serial.println("UI Request Received.");
         int size = fileManager.layoutFileSize + PACKET_TYPE_HEADER_LENGTH;
         char *xml = (char *)malloc(size);
         sprintf(xml, "210|");
 
         fileManager.readFile(xml + PACKET_TYPE_HEADER_LENGTH);
 
-        //Ensures there isnt any junk after the xml.
+        //Ensures there isn't any junk after the xml.
         xml[size] = '\0';
 
         networkManager.sendReplyPacket(xml);
@@ -150,13 +151,13 @@ public:
 
     void discoveryRequest()
     {
-        Serial.println("Discovery Request Recieved.");
+        Serial.println("Discovery Request Received.");
         networkManager.discovery();
     }
 
     void discoveryHeaderRequest()
     {
-        Serial.println("Discovery Header Request Recieved.");
+        Serial.println("Discovery Header Request Received.");
         char response[86];
         sprintf(response, "330|%s,%s", networkManager.macAddress, header);
         networkManager.sendReplyPacket(response);
@@ -164,14 +165,14 @@ public:
 
     void getIoTCommand(char *iotCommand)
     {
-        Serial.println("IoT Command Recieved.");
+        Serial.println("IoT Command Received.");
         networkManager.getRecentPacket(temp);
         strcpy(iotCommand, temp + PACKET_TYPE_HEADER_LENGTH);
     }
 
     void statusLeaseRequest()
     {
-        Serial.println("Status Request Recieved. Adding to List...");
+        Serial.println("Status Request Received. Adding to List...");
         boolean responseRequired = statusManager.newStatusRegistration(networkManager.incomingPacket, temp);
         if (responseRequired)
         {
