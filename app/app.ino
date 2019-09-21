@@ -71,7 +71,7 @@ void setup()
 
 void loop()
 {
-  if (ioTDevice.commandRecieved(iotCommand))
+  if (ioTDevice.commandReceived(iotCommand))
   {
     deviceStatus->executeCommand(iotCommand);
   }

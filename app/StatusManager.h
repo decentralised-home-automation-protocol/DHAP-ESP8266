@@ -17,6 +17,8 @@ private:
     unsigned long timeSinceLastUpdate = 0;
 
 public:
+    bool forceUpdateFlag = false;
+
     void setStatusController(Status &devStatus, const char *mac)
     {
         deviceStatus = &devStatus;
@@ -27,6 +29,12 @@ public:
 
     boolean getStatusUpdateIfNeeded(char *status)
     {
+        if(forceUpdateFlag) {
+            forceUpdateFlag = false;
+            sprintf(status, "%s%s", statusResponseHeader, deviceStatus->getStatus().c_str());
+            return true;
+        }
+
         //check if someone is listening with a valid lease.
         if (numDevicesListening > 0)
         {
