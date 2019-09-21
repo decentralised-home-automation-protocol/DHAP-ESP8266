@@ -54,7 +54,7 @@ public:
         statusManager.setStatusController(deviceStatus, networkManager.macAddress);
     }
 
-    bool commandRecieved(char *iotCommand)
+    bool commandReceived(char *iotCommand)
     {
         boolean newStatus = statusManager.getStatusUpdateIfNeeded(temp);
         if (newStatus)
@@ -62,7 +62,7 @@ public:
             networkManager.broadcastStatus(temp);
         }
 
-        if (networkManager.newCommandRecieved())
+        if (networkManager.newCommandReceived())
         {
             return handleIncomingPacket(iotCommand);
         }
