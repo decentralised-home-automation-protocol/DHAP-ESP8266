@@ -32,7 +32,7 @@ public:
         randomSeed(macAddress[6]);
     }
 
-    bool newCommandRecieved()
+    bool newCommandReceived()
     {
         int packetSize = Udp.parsePacket();
         if (packetSize)
@@ -98,6 +98,7 @@ public:
             if (timeout == 0)
             {
                 previousMillis = millis();
+                broadcastStatus("130");
                 return false;
             }
 
@@ -221,7 +222,7 @@ public:
 
     bool checkForNewJoiningPacket()
     {
-        if (newCommandRecieved())
+        if (newCommandReceived())
         {
             if (getRecentPacketType() == 100)
             {
