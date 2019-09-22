@@ -8,6 +8,8 @@ private:
     NetworkManager networkManager;
     FileManager fileManager;
     StatusManager statusManager;
+    Status *deviceStatus;
+
     const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     char *ssid;
@@ -17,8 +19,9 @@ private:
     char location[32];
     char headerVersion;
 public:
-    void setup(bool forceSetupAP, Status &deviceStatus)
+    void setup(bool forceSetupAP, Status &userDeviceStatus)
     {
+        deviceStatus = &userDeviceStatus;
         fileManager.mountFileSystem();
         networkManager.initialise();
 
@@ -51,7 +54,7 @@ public:
 
         getHeader();
 
-        statusManager.setStatusController(deviceStatus, networkManager.macAddress);
+        statusManager.setStatusController(userDeviceStatus, networkManager.macAddress);
     }
 
     void getHeader(){
@@ -67,7 +70,7 @@ public:
         networkManager.headerVersion = headerVersion;
     }
 
-    bool commandReceived(char *iotCommand)
+    void loop()
     {
         boolean newStatus = statusManager.getStatusUpdateIfNeeded(temp);
         if (newStatus)
@@ -77,54 +80,56 @@ public:
 
         if (networkManager.newCommandReceived())
         {
-            return handleIncomingPacket(iotCommand);
+            handleIncomingPacket();
         }
 
         if (!networkManager.hasJoinedNetwork)
         {
             networkManager.joinWiFiLoop(ssid, password);
         }
-        return false;
     }
 
-    bool handleIncomingPacket(char *iotCommand)
+    void handleIncomingPacket()
     {
         switch (networkManager.getRecentPacketType())
         {
         case 100: //Joining credentials
             joiningPacket();
-            return false;
+            return;
         case 200: //UI Request
             uiRequest();
-            return false;
+            return;
         case 300: //Discovery Request
             discoveryRequest();
-            return false;
+            return;
         case 320: //Discovery Header Request
             discoveryHeaderRequest();
-            return false;
+            return;
         case 400: //IoT Command
-            getIoTCommand(iotCommand);
-            statusManager.forceUpdateFlag = true;
-            return true;
+            getIoTCommand();
+
+            //Device state has changed. Send a status update.
+            statusManager.getStatusUpdate(temp);
+            networkManager.broadcastStatus(temp);
+            return;
         case 500: //Status Lease Request
             statusLeaseRequest();
-            return false;
+            return;
         case 520: //Leave Status Lease
             statusManager.removeListeningDevice();
-            return false;
+            return;
         case 600: //Change header name
             changeHeaderName();
             getHeader();
-            return false;
+            return;
         case 610: //Change header location
             changeHeaderLocation();
             getHeader();
-            return false;
+            return;
         default:
-            return false;
+            return;
         };
-        return false;
+        return;
     }
 
     void joiningPacket()
@@ -184,11 +189,15 @@ public:
         networkManager.sendReplyPacket(response);
     }
 
-    void getIoTCommand(char *iotCommand)
+    void getIoTCommand()
     {
+        char iotCommand[255];
+
         Serial.println("IoT Command Received.");
         networkManager.getRecentPacket(temp);
         strcpy(iotCommand, temp + PACKET_TYPE_HEADER_LENGTH);
+
+        // deviceStatus.executeCommand(getCommandId(iotCommand), getCommandData(iotCommand));
     }
 
     void statusLeaseRequest()
@@ -212,5 +221,20 @@ public:
         networkManager.getRecentPacket(temp);
         strtok(temp, "|"); //type
         fileManager.setFileHeader(headerVersion, name, strtok(NULL, "|"));
+    }
+    
+    String getCommandId(char *command)
+    {
+        char commandData[255];
+        strcpy(commandData, command);
+        return strtok(commandData, "=");
+    }
+
+    String getCommandData(char *command)
+    {
+        char commandData[255];
+        strcpy(commandData, command);
+        strtok(commandData, "=");
+        return strtok(NULL, "=");
     }
 };

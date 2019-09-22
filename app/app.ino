@@ -39,12 +39,9 @@ public:
     return status;
   }
 
-  void executeCommand(char* command)
+  void executeCommand(String elementId, String data)
   {
-    String id = getCommandId(command);
-    String data = getCommandData(command);
-
-    Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
+    Serial.printf("IotCommand: id: %s data: %s\n", elementId.c_str(), data.c_str());
   }
 
   int getMaxLeaseLength()
@@ -61,23 +58,17 @@ public:
 };
 
 IoTDevice ioTDevice;
-DeviceStatus *deviceStatus;
-char iotCommand[255];
+DeviceStatus deviceStatus;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println();
-
-  deviceStatus = new DeviceStatus();
-
-  ioTDevice.setup(false, *deviceStatus);
+  
+  ioTDevice.setup(false, deviceStatus);
 }
 
 void loop()
 {
-  if (ioTDevice.commandReceived(iotCommand))
-  {
-    deviceStatus->executeCommand(iotCommand);
-  }
+  ioTDevice.loop();
 }
