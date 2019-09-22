@@ -19,7 +19,7 @@ private:
     char location[32];
     char headerVersion;
 public:
-    void setup(bool forceSetupAP, Status &userDeviceStatus)
+    void setup(Status &userDeviceStatus, bool forceSetupAP)
     {
         deviceStatus = &userDeviceStatus;
         fileManager.mountFileSystem();

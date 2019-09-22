@@ -64,8 +64,8 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println();
-  
-  ioTDevice.setup(false, deviceStatus);
+
+  ioTDevice.setup(deviceStatus, false);
 }
 
 void loop()
