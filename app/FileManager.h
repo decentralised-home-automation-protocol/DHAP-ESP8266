@@ -32,7 +32,7 @@ public:
         file.readBytes(header, file.size());
         file.close();
 
-        if (strlen(header) < 1){
+        if (strlen(header) < 5){
             Serial.println("No header file found! Creating a header file...");
             sprintf(header, "0,name not set,location not set");
 

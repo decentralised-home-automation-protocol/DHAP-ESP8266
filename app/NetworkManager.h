@@ -166,9 +166,14 @@ public:
                 {
                     // this device is on the list
                     Serial.println("This device is on the census list\n");
+
+                    if(!strcmp(statusBit,"0")){
+                        Serial.println("Status bit is incorrect. Sending reply...\n");
+
+                        sendDiscoveryReply();
+                    }
                     
                     return;
-                    // TODO: check the status and visability bits are up to date.
                 }
 
                 device = strtok_r(NULL, "-", &end_str);
@@ -186,7 +191,7 @@ public:
     void sendDiscoveryReply(){
         char reply[32];
 
-        sprintf(reply, "310|%s,%d,%d,%c", macAddress, 0, 0, headerVersion);
+        sprintf(reply, "310|%s,1,%d,%c", macAddress, 0, headerVersion);
         Serial.print("Reply packet: ");
         Serial.println(reply);
 
