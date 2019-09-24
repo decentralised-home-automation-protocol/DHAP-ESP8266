@@ -192,12 +192,10 @@ public:
     void getIoTCommand()
     {
         char iotCommand[255];
-
-        Serial.println("IoT Command Received.");
         networkManager.getRecentPacket(temp);
         strcpy(iotCommand, temp + PACKET_TYPE_HEADER_LENGTH);
 
-        // deviceStatus.executeCommand(getCommandId(iotCommand), getCommandData(iotCommand));
+        deviceStatus->executeCommand(getCommandId(iotCommand), getCommandData(iotCommand));
     }
 
     void statusLeaseRequest()
