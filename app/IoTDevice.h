@@ -145,6 +145,8 @@ public:
             char *type = strtok(temp, "|,");
             ssid = strtok(NULL, "|,");
             password = strtok(NULL, "|,");
+            strcpy(name, strtok(NULL, "|,"));
+            strcpy(location, strtok(NULL, "|,"));
 
             if (!networkManager.joinNetwork(ssid, password, true))
             {
@@ -154,6 +156,7 @@ public:
             else
             {
                 fileManager.saveNetworkCredentials(ssid, password);
+                fileManager.setFileHeader(headerVersion, name, location);
             }
         }
     }

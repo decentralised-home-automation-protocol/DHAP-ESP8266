@@ -68,7 +68,6 @@ public:
 
         Udp.begin(localUdpPort);
         Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.softAPIP().toString().c_str(), localUdpPort);
-        Serial.println("Its false");
         hasJoinedNetwork = false;
     }
 
