@@ -10,11 +10,11 @@ class NetworkManager
 {
 private:
     WiFiUDP Udp;
+    const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     unsigned int localUdpPort = 8888; // local port to listen on
     char *DEFAULT_SSID = "ESPsoftAP_01";
     char *DEFAULT_PASSWORD = "passforap";
-    const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     unsigned long previousMillis = 0;
     unsigned long leaseLengthRemaining = 0;
@@ -24,6 +24,7 @@ private:
 public:
     char incomingPacket[255]; // buffer for incoming packets
     char macAddress[18];
+    char headerVersion;
     bool hasJoinedNetwork = false;
 
     void initialise()
@@ -146,8 +147,6 @@ public:
 
     void discovery()
     {
-        char reply[32];
-
         if (strcmp(incomingPacket, "300") != 0)
         {
             // check if this device is on the list
@@ -156,31 +155,42 @@ public:
 
             while (device != NULL)
             {
-                char *end_token;
-                char *MACAddress = strtok_r(device, ",", &end_token);
-                char *statusBit = strtok_r(NULL, ",", &end_token);
-                char *visibilityBit = strtok_r(NULL, ",", &end_token);
+                char *MACAddress = strtok(device, ",");
+                char *statusBit = strtok(NULL, ",");
+                char *visibilityBit = strtok(NULL, ",");                
 
-                Serial.printf("%s <=> %s\n", MACAddress, macAddress);
+                Serial.printf("%s <=> %s\n", macAddress, MACAddress);
 
                 if (strcmp(MACAddress, macAddress) == 0)
                 {
                     // this device is on the list
-                    Serial.println("This device is on the census list");
+                    Serial.println("This device is on the census list\n");
+
+                    if(!strcmp(statusBit,"0")){
+                        Serial.println("Status bit is incorrect. Sending reply...\n");
+
+                        sendDiscoveryReply();
+                    }
+                    
                     return;
-                    // TODO: check the device details are up to date.
                 }
 
                 device = strtok_r(NULL, "-", &end_str);
             }
-            Serial.print("Device not in census list\n");
+            Serial.print("Device not in census list\n\n");
         }
         else
         {
             Serial.print("Census list is empty\n");
         }
 
-        sprintf(reply, "310|%s,%d,%d", macAddress, 0, 0);
+        sendDiscoveryReply();
+    }
+
+    void sendDiscoveryReply(){
+        char reply[32];
+
+        sprintf(reply, "310|%s,1,%d,%c", macAddress, 0, headerVersion);
         Serial.print("Reply packet: ");
         Serial.println(reply);
 
