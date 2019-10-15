@@ -21,7 +21,7 @@ public:
     return status;
   }
 
-  void executeCommand(char *command)
+  void executeCommand(String elementId, String data)
   {
     String id = getCommandId(command);
     String data = getCommandData(command);
@@ -56,23 +56,17 @@ public:
 };
 
 IoTDevice ioTDevice;
-DeviceStatus *deviceStatus;
-char iotCommand[255];
+DeviceStatus deviceStatus;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println();
 
-  deviceStatus = new DeviceStatus();
-
-  ioTDevice.setup(false, *deviceStatus);
+  ioTDevice.setup(deviceStatus, false);
 }
 
 void loop()
 {
-  if (ioTDevice.commandReceived(iotCommand))
-  {
-    deviceStatus->executeCommand(iotCommand);
-  }
+  ioTDevice.loop();
 }
