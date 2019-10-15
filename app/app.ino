@@ -22,26 +22,23 @@ public:
     return status;
   }
 
-  void executeCommand(char *command)
+  void executeCommand(String elementId, String data)
   {
-    String id = getCommandId(command);
-    String data = getCommandData(command);
+    Serial.printf("IotCommand: id: %s data: %s\n", elementId.c_str(), data.c_str());
 
-    Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
-
-    if (!strcmp(id.c_str(), "1-1"))
+    if (!strcmp(elementId.c_str(), "1-1"))
     {
       on = !on;
     }
-    else if (!strcmp(id.c_str(), "3-1"))
+    else if (!strcmp(elementId.c_str(), "3-1"))
     {
       warm = !warm;
     }
-    else if (!strcmp(id.c_str(), "4-1"))
+    else if (!strcmp(elementId.c_str(), "4-1"))
     {
       temp = atoi(data.c_str());
     }
-    else if (!strcmp(id.c_str(), "5-1"))
+    else if (!strcmp(elementId.c_str(), "5-1"))
     {
       setting = atoi(data.c_str());
     }
