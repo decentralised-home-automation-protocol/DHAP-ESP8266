@@ -8,22 +8,7 @@ public:
         return "No status information defined.";        
     }
 
-    virtual void executeCommand(char *command);
-
-    String getCommandId(char *command)
-    {
-        char commandData[255];
-        strcpy(commandData, command);
-        return strtok(commandData, "=");
-    }
-
-    String getCommandData(char *command)
-    {
-        char commandData[255];
-        strcpy(commandData, command);
-        strtok(commandData, "=");
-        return strtok(NULL, "=");
-    }
+    virtual void executeCommand(String elementId, String data);
 
     virtual int getMaxLeaseLength()
     {

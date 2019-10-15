@@ -8,17 +8,20 @@ private:
     NetworkManager networkManager;
     FileManager fileManager;
     StatusManager statusManager;
+    Status *deviceStatus;
+
+    const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     char *ssid;
     char *password;
     char temp[255];
-    char header[64];
-
-    const int PACKET_TYPE_HEADER_LENGTH = 4;
-
+    char name[32];
+    char location[32];
+    char headerVersion;
 public:
-    void setup(bool forceSetupAP, Status &deviceStatus)
+    void setup(Status &userDeviceStatus, bool forceSetupAP)
     {
+        deviceStatus = &userDeviceStatus;
         fileManager.mountFileSystem();
         networkManager.initialise();
 
@@ -48,13 +51,26 @@ public:
                 }
             }
         }
-        fileManager.getFileHeader(header);
-        Serial.printf("File header: %s", header);
 
-        statusManager.setStatusController(deviceStatus, networkManager.macAddress);
+        getHeader();
+
+        statusManager.setStatusController(userDeviceStatus, networkManager.macAddress);
     }
 
-    bool commandReceived(char *iotCommand)
+    void getHeader(){
+        char header[65];
+        fileManager.getFileHeader(header);
+
+        headerVersion = header[0];
+
+        strtok(header, ",");
+        strcpy(name, strtok(NULL, ","));
+        strcpy(location, strtok(NULL, ","));
+
+        networkManager.headerVersion = headerVersion;
+    }
+
+    void loop()
     {
         boolean newStatus = statusManager.getStatusUpdateIfNeeded(temp);
         if (newStatus)
@@ -64,46 +80,56 @@ public:
 
         if (networkManager.newCommandReceived())
         {
-            return handleIncomingPacket(iotCommand);
+            handleIncomingPacket();
         }
 
         if (!networkManager.hasJoinedNetwork)
         {
             networkManager.joinWiFiLoop(ssid, password);
         }
-        return false;
     }
 
-    bool handleIncomingPacket(char *iotCommand)
+    void handleIncomingPacket()
     {
         switch (networkManager.getRecentPacketType())
         {
         case 100: //Joining credentials
             joiningPacket();
-            return false;
+            return;
         case 200: //UI Request
             uiRequest();
-            return false;
+            return;
         case 300: //Discovery Request
             discoveryRequest();
-            return false;
+            return;
         case 320: //Discovery Header Request
             discoveryHeaderRequest();
-            return false;
+            return;
         case 400: //IoT Command
-            getIoTCommand(iotCommand);
-            statusManager.forceUpdateFlag = true;
-            return true;
+            getIoTCommand();
+
+            //Device state has changed. Send a status update.
+            statusManager.getStatusUpdate(temp);
+            networkManager.broadcastStatus(temp);
+            return;
         case 500: //Status Lease Request
             statusLeaseRequest();
-            return false;
+            return;
         case 520: //Leave Status Lease
             statusManager.removeListeningDevice();
-            return false;
+            return;
+        case 600: //Change header name
+            changeHeaderName();
+            getHeader();
+            return;
+        case 610: //Change header location
+            changeHeaderLocation();
+            getHeader();
+            return;
         default:
-            return false;
+            return;
         };
-        return false;
+        return;
     }
 
     void joiningPacket()
@@ -119,6 +145,8 @@ public:
             char *type = strtok(temp, "|,");
             ssid = strtok(NULL, "|,");
             password = strtok(NULL, "|,");
+            strcpy(name, strtok(NULL, "|,"));
+            strcpy(location, strtok(NULL, "|,"));
 
             if (!networkManager.joinNetwork(ssid, password, true))
             {
@@ -128,6 +156,7 @@ public:
             else
             {
                 fileManager.saveNetworkCredentials(ssid, password);
+                fileManager.setFileHeader(headerVersion, name, location);
             }
         }
     }
@@ -159,15 +188,17 @@ public:
     {
         Serial.println("Discovery Header Request Received.");
         char response[86];
-        sprintf(response, "330|%s,%s", networkManager.macAddress, header);
+        sprintf(response, "330|%s,%c,%s,%s", networkManager.macAddress, headerVersion, name, location);
         networkManager.sendReplyPacket(response);
     }
 
-    void getIoTCommand(char *iotCommand)
+    void getIoTCommand()
     {
-        Serial.println("IoT Command Received.");
+        char iotCommand[255];
         networkManager.getRecentPacket(temp);
         strcpy(iotCommand, temp + PACKET_TYPE_HEADER_LENGTH);
+
+        deviceStatus->executeCommand(getCommandId(iotCommand), getCommandData(iotCommand));
     }
 
     void statusLeaseRequest()
@@ -178,5 +209,33 @@ public:
         {
             networkManager.sendReplyPacket(temp);
         }
+    }
+
+    void changeHeaderName(){
+        networkManager.getRecentPacket(temp);
+        strtok(temp, "|"); //type
+        fileManager.setFileHeader(headerVersion, strtok(NULL, "|"), location);
+    }
+
+    void changeHeaderLocation()
+    {
+        networkManager.getRecentPacket(temp);
+        strtok(temp, "|"); //type
+        fileManager.setFileHeader(headerVersion, name, strtok(NULL, "|"));
+    }
+    
+    String getCommandId(char *command)
+    {
+        char commandData[255];
+        strcpy(commandData, command);
+        return strtok(commandData, "=");
+    }
+
+    String getCommandData(char *command)
+    {
+        char commandData[255];
+        strcpy(commandData, command);
+        strtok(commandData, "=");
+        return strtok(NULL, "=");
     }
 };
