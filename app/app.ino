@@ -24,26 +24,23 @@ public:
     return status;
   }
 
-  void executeCommand(char *command)
+  void executeCommand(String elementId, String data)
   {
-    String id = getCommandId(command);
-    String data = getCommandData(command);
+    Serial.printf("IotCommand: id: %s data: %s\n", elementId.c_str(), data.c_str());
 
-    Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
-
-    if (!strcmp(id.c_str(), "1-1"))
+    if (!strcmp(elementId.c_str(), "1-1"))
     {
       online = !online;
     }
-    else if (!strcmp(id.c_str(), "2-2"))
+    else if (!strcmp(elementId.c_str(), "2-2"))
     {
       targetTemp = atoi(data.c_str());
     }
-    else if (!strcmp(id.c_str(), "3-1"))
+    else if (!strcmp(elementId.c_str(), "3-1"))
     {
       fanSpeed = atoi(data.c_str());
     }
-    else if (!strcmp(id.c_str(), "4-1"))
+    else if (!strcmp(elementId.c_str(), "4-1"))
     {
       char schedulerData[12];
       strcpy(schedulerData, data.c_str());
