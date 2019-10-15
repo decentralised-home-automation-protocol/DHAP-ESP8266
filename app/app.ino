@@ -23,20 +23,17 @@ public:
 
   void executeCommand(String elementId, String data)
   {
-    String id = getCommandId(command);
-    String data = getCommandData(command);
+    Serial.printf("IotCommand: id: %s data: %s\n", elementId.c_str(), data.c_str());
 
-    Serial.printf("IotCommand: id: %s data: %s\n", id.c_str(), data.c_str());
-
-    if (!strcmp(id.c_str(), "1-1"))
+    if (!strcmp(elementId.c_str(), "1-1"))
     {
       online = !online;
     }
-    else if (!strcmp(id.c_str(), "1-2"))
+    else if (!strcmp(elementId.c_str(), "1-2"))
     {
       source = atoi(data.c_str());
     }
-    else if (!strcmp(id.c_str(), "2-1"))
+    else if (!strcmp(elementId.c_str(), "2-1"))
     {
       recording = !recording;
     }
