@@ -8,7 +8,10 @@ public:
   int targetTemp = 23;
   int fanSpeed = 5;
   int mode = 2;
-  char time[9] = "10:00 AM";
+  char time0[6] = "10:00";
+  char time1[6] = "14:00";
+  char time2[6] = "17:00";
+  char time3[6] = "09:50";
 
   char *trueString = "true";
   char *falseString = "false";
@@ -19,7 +22,15 @@ public:
   {
     char status[120];
 
-    sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time);
+    if(mode == 0){
+      sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time0);
+    }else if(mode == 1) {
+      sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time1);
+    }else if(mode == 2) {
+      sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time2);
+    }else {
+      sprintf(status, "%s,%d,%d,%d,%d!%s", online ? trueString : falseString, currentTemp, targetTemp, fanSpeed, mode, time3);
+    }
 
     return status;
   }
@@ -44,7 +55,13 @@ public:
     {
       char schedulerData[12];
       strcpy(schedulerData, data.c_str());
-      mode = atoi(strtok(schedulerData, "!"));
+      int newMode = atoi(strtok(schedulerData, "!"));
+
+      if(newMode != mode) {
+        mode = newMode;
+        return;
+      }
+      mode = newMode;
 
       char *timeString = strtok(NULL, "!");
       if (timeString == NULL)
@@ -52,7 +69,15 @@ public:
         return;
       }
 
-      strcpy(time, timeString);
+      if(mode == 0){
+        strcpy(time0, timeString);
+      }else if(mode == 1) {
+        strcpy(time1, timeString);
+      }else if(mode == 2) {
+        strcpy(time2, timeString);
+      }else {
+        strcpy(time3, timeString);
+      }
     }
   }
 
