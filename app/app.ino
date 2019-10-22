@@ -3,38 +3,18 @@
 class DeviceStatus : public Status
 {
 public:
-  int stepper = 0;
-  int rangeInput = 1000;
-  int selection = 0;
-  int statusValue = 0;
-  int progress = 0;
-
-  boolean buttons = true;
+  boolean on = false;
 
   String getStatus()
   {
     char status[120];
-    if (buttons)
+    if (on)
     {
-      sprintf(status, "true,true,%d,%d,%d,%d,updated%d,%d,1!12:30,password", stepper, rangeInput, selection, statusValue, progress, progress);
+      sprintf(status, "true");
     }
     else
     {
-      sprintf(status, "false,false,%d,%d,%d,%d,updated%d,%d,2!11:50,password1", stepper, rangeInput, selection, statusValue, progress, progress);
-    }
-    buttons = !buttons;
-    stepper++;
-    rangeInput++;
-    selection++;
-    if (selection > 5)
-    {
-      selection = 0;
-    }
-    statusValue++;
-    progress++;
-    if (progress > 100)
-    {
-      progress = 0;
+      sprintf(status, "false");
     }
     return status;
   }
@@ -42,6 +22,15 @@ public:
   void executeCommand(String elementId, String data)
   {
     Serial.printf("IotCommand: id: %s data: %s\n", elementId.c_str(), data.c_str());
+    on = !on;
+
+    if(on){
+      Serial.printf("Setting high\n");
+      digitalWrite(D3,HIGH);
+    }else{
+      Serial.printf("Setting low\n");
+      digitalWrite(D3,LOW);
+    }
   }
 
   int getMaxLeaseLength()
@@ -64,6 +53,9 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println();
+
+  pinMode(D3,OUTPUT);
+//  digitalWrite(D3,LOW);
 
   ioTDevice.setup(deviceStatus, false);
 }
