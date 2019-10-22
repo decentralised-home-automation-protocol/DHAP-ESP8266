@@ -23,7 +23,8 @@ public:
     {
         deviceStatus = &userDeviceStatus;
         fileManager.mountFileSystem();
-        networkManager.initialise();
+        getHeader();
+        networkManager.initialise(name);
 
         if (forceSetupAP)
         {
@@ -51,8 +52,6 @@ public:
                 }
             }
         }
-
-        getHeader();
 
         statusManager.setStatusController(userDeviceStatus, networkManager.macAddress);
     }
