@@ -13,7 +13,7 @@ private:
     const int PACKET_TYPE_HEADER_LENGTH = 4;
 
     unsigned int localUdpPort = 8888; // local port to listen on
-    char *DEFAULT_SSID = "ESPsoftAP_01";
+    char DEFAULT_SSID[27];
     char *DEFAULT_PASSWORD = "passforap";
 
     unsigned long previousMillis = 0;
@@ -27,10 +27,11 @@ public:
     char headerVersion;
     bool hasJoinedNetwork = false;
 
-    void initialise()
+    void initialise(char *deviceName)
     {
         strcpy(macAddress, WiFi.macAddress().c_str());
         randomSeed(macAddress[6]);
+        sprintf(DEFAULT_SSID, "ESP_AP_%s",deviceName);
     }
 
     bool newCommandReceived()
